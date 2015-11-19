@@ -1,7 +1,13 @@
 PACKAGE = de.markusfisch.android.imageviewmatrixprobe
 APK = ImageViewMatrixProbe/build/outputs/apk/ImageViewMatrixProbe-debug.apk
 
-all: apk install start
+all: debug install start
+
+debug:
+	./gradlew assembleDebug
+
+lint:
+	./gradlew lintDebug
 
 apk:
 	./gradlew build
