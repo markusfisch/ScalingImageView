@@ -40,8 +40,9 @@ public class ScalingImageView extends ImageView
 			case MotionEvent.ACTION_DOWN:
 			case MotionEvent.ACTION_POINTER_DOWN:
 				setMatrixFromImageMatrix();
+				clearOrigins();
 				setOrigins( event, pointerCount );
-				setIdentityDest( event, pointerCount );
+				initScaling( event, pointerCount );
 				return true;
 			case MotionEvent.ACTION_MOVE:
 				transformImage( event, pointerCount );
@@ -50,7 +51,7 @@ public class ScalingImageView extends ImageView
 				setMatrixFromImageMatrix();
 				clearOrigins();
 				setOrigins( event, pointerCount );
-				setIdentityDest( event, pointerCount );
+				initScaling( event, pointerCount );
 				return true;
 			case MotionEvent.ACTION_CANCEL:
 			case MotionEvent.ACTION_UP:
@@ -75,7 +76,6 @@ public class ScalingImageView extends ImageView
 
 	private void setOrigins( MotionEvent event, int pointerCount )
 	{
-		// record where each pointer has originally appeared
 		for( int n = pointerCount; n-- > 0; )
 		{
 			int id = getPointerId( event, n );
@@ -88,9 +88,9 @@ public class ScalingImageView extends ImageView
 		}
 	}
 
-	private void setIdentityDest( MotionEvent event, int pointerCount )
+	private void initScaling( MotionEvent event, int pointerCount )
 	{
-		if( pointerCount != 2 )
+		if( pointerCount < 2 )
 			return;
 
 		float x1 = event.getX( 0 );
@@ -110,7 +110,7 @@ public class ScalingImageView extends ImageView
 
 		transforming.set( matrix );
 
-		if( pointerCount == 1 )
+		/*if( pointerCount == 1 )
 		{
 			int id = getPointerId( event, 0 );
 
@@ -118,7 +118,7 @@ public class ScalingImageView extends ImageView
 				event.getX( 0 )-originX[id],
 				event.getY( 0 )-originY[id] );
 		}
-		else if( pointerCount > 1 )
+		else*/ if( pointerCount > 1 )
 		{
 			float d = dist(
 				event.getX( 0 ),
@@ -133,14 +133,22 @@ public class ScalingImageView extends ImageView
 				centerY );
 		}
 
+		int id = getPointerId( event, 0 );
+
+		transforming.postTranslate(
+			event.getX( 0 )-originX[id],
+			event.getY( 0 )-originY[id] );
+
 		setImageMatrix( transforming );
 	}
 
 	private static int getPointerId( MotionEvent event, int index )
 	{
-		return Math.min(
+		/*return Math.min(
 			event.getPointerId( index ),
-			MAX_POINTERS-1 );
+			MAX_POINTERS-1 );*/
+
+		return event.getPointerId( index );
 	}
 
 	private static float dist( float x1, float y1, float x2, float y2 )
