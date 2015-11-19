@@ -21,8 +21,5 @@ start:
 uninstall:
 	adb $(TARGET) uninstall $(PACKAGE)
 
-images:
-	svg/update.sh
-
 clean:
 	./gradlew clean
