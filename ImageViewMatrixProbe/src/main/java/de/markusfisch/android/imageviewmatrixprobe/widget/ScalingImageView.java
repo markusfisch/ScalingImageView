@@ -8,24 +8,21 @@ import android.widget.ImageView;
 
 public class ScalingImageView extends ImageView
 {
-	private static int MAX_POINTERS = 10;
+	private static final int MAX_POINTERS = 24;
 
-	private float originX[] = new float[MAX_POINTERS];
-	private float originY[] = new float[MAX_POINTERS];
-	private float identityDist;
-	private float centerX;
-	private float centerY;
-	private Matrix matrix = new Matrix();
-	private Matrix transforming = new Matrix();
+	private final Matrix origin = new Matrix();
+	private final Matrix transformed = new Matrix();
+	private final float originX[] = new float[MAX_POINTERS];
+	private final float originY[] = new float[MAX_POINTERS];
+	private final Length originLength = new Length();
+	private final Length length = new Length();
 
 	public ScalingImageView( Context context, AttributeSet attr )
 	{
 		super( context, attr );
 
-		clearOrigins();
-
 		setScaleType( ImageView.ScaleType.MATRIX );
-		setImageMatrix( matrix );
+		setImageMatrix( origin );
 	}
 
 	@Override
@@ -33,150 +30,153 @@ public class ScalingImageView extends ImageView
 	{
 		final int pointerCount = Math.min(
 			event.getPointerCount(),
-			MAX_POINTERS );
+			MAX_POINTERS-1 );
+		int ignore = -1;
 
 		switch( event.getActionMasked() )
 		{
+			// the number of pointers changed so
+			// (re)initialize the transformation
+			case MotionEvent.ACTION_POINTER_UP:
+				ignore = event.getActionIndex();
 			case MotionEvent.ACTION_DOWN:
 			case MotionEvent.ACTION_POINTER_DOWN:
-				setMatrixFromImageMatrix();
-				clearOrigins();
-				setOrigins( event, pointerCount );
-				initScaling( event, pointerCount );
+				setOriginMatrix();
+				setPointerOrigins( event, pointerCount );
+				setOriginLength( event, pointerCount, ignore );
 				return true;
+			// the position of the pointer(s) changed
+			// so transform accordingly
 			case MotionEvent.ACTION_MOVE:
 				transformImage( event, pointerCount );
 				return true;
-			case MotionEvent.ACTION_POINTER_UP:
-				setMatrixFromImageMatrix();
-				clearOrigins();
-				setOrigins( event, pointerCount );
-				initScaling( event, pointerCount );
-				return true;
+			// end of transformation
 			case MotionEvent.ACTION_CANCEL:
 			case MotionEvent.ACTION_UP:
-				setMatrixFromImageMatrix();
-				clearOrigins();
 				return true;
 		}
 
 		return onTouchEvent( event );
 	}
 
-	private void setMatrixFromImageMatrix()
+	//private void initTransform( MotionEvent event, int pointerCount )
+
+	private void setOriginMatrix()
 	{
-		matrix.set( getImageMatrix() );
+		origin.set( transformed );
 	}
 
-	private void clearOrigins()
-	{
-		for( int n = MAX_POINTERS; n-- > 0; )
-			originX[n] = -1;
-	}
-
-	private void setOrigins( MotionEvent event, int pointerCount )
+	private void setPointerOrigins( MotionEvent event, int pointerCount )
 	{
 		for( int n = pointerCount; n-- > 0; )
 		{
-			int id = getPointerId( event, n );
+			int id = event.getPointerId( n );
 
-			if( originX[id] < 0 )
-			{
-				originX[id] = event.getX( n );
-				originY[id] = event.getY( n );
-			}
+			originX[id] = event.getX( n );
+			originY[id] = event.getY( n );
 		}
 	}
 
-	private void initScaling( MotionEvent event, int pointerCount )
+	private void setOriginLength(
+		MotionEvent event,
+		int pointerCount,
+		int ignore )
 	{
 		if( pointerCount < 2 )
 			return;
 
-		float x1 = event.getX( 0 );
-		float y1 = event.getY( 0 );
-		float x2 = event.getX( 1 );
-		float y2 = event.getY( 1 );
+		int p1 = 0;
+		int p2 = 1;
 
-		identityDist = dist( x1, y1, x2, y2 );
-		centerX = (x1+x2)*.5f;
-		centerY = (y1+y2)*.5f;
+		if( ignore > -1 &&
+			pointerCount > 2 )
+		{
+			p1 = p2 = 0xffff;
+
+			for( int n = 0; n < pointerCount; ++n )
+			{
+				if( n != ignore )
+				{
+					if( p1 == 0xffff )
+						p1 = n;
+					else if( p2 == 0xffff )
+						p2 = n;
+					else
+						break;
+				}
+			}
+		}
+
+		originLength.set( event, p1, p2 );
 	}
 
 	private void transformImage( MotionEvent event, int pointerCount )
 	{
-		if( pointerCount < 1 )
-			return;
+		// get the origin as it was at the beginning of the
+		// transforming gesture since each move event shall
+		// transform from the same origin
+		transformed.set( origin );
 
-		transforming.set( matrix );
-
-		/*if( pointerCount == 1 )
+		if( pointerCount == 1 )
 		{
-			int id = getPointerId( event, 0 );
-
-			transforming.postTranslate(
+			int id = event.getPointerId( 0 );
+			transformed.postTranslate(
 				event.getX( 0 )-originX[id],
 				event.getY( 0 )-originY[id] );
 		}
-		else*/ if( pointerCount > 1 )
+		else if( pointerCount > 1 )
 		{
-			float d = dist(
-				event.getX( 0 ),
-				event.getY( 0 ),
-				event.getX( 1 ),
-				event.getY( 1 ) )/identityDist;
+			length.set( event, 0, 1 );
 
-			transforming.postScale(
+			float d = length.length/originLength.length;
+			transformed.postScale(
 				d,
 				d,
-				centerX,
-				centerY );
+				originLength.pivotX,
+				originLength.pivotY );
+
+			transformed.postTranslate(
+				length.pivotX-originLength.pivotX,
+				length.pivotY-originLength.pivotY );
 		}
 
-		int id = getPointerId( event, 0 );
-
-		transforming.postTranslate(
-			event.getX( 0 )-originX[id],
-			event.getY( 0 )-originY[id] );
-
-		setImageMatrix( transforming );
+		setImageMatrix( transformed );
 	}
 
-	private static int getPointerId( MotionEvent event, int index )
+	private class Length
 	{
-		/*return Math.min(
-			event.getPointerId( index ),
-			MAX_POINTERS-1 );*/
+		public float length;
+		public float pivotX;
+		public float pivotY;
 
-		return event.getPointerId( index );
+		public void set( MotionEvent event, int p1, int p2 )
+		{
+			float x1 = event.getX( p1 );
+			float y1 = event.getY( p1 );
+			float x2 = event.getX( p2 );
+			float y2 = event.getY( p2 );
+			float dx = x2-x1;
+			float dy = y2-y1;
+
+			length = (float)Math.sqrt( dx*dx + dy*dy );
+			pivotX = (x1+x2)*.5f;
+			pivotY = (y1+y2)*.5f;
+		}
 	}
-
-	private static float dist( float x1, float y1, float x2, float y2 )
-	{
-		float dx = x2-x1;
-		float dy = y2-y1;
-
-		//return Math.sqrt( dx*dx + dy*dy );
-		return dx*dx + dy*dy;
-	}
-
 /*
 		Drawable drawable = getDrawable();
 		drawable.getIntrinsicWidth();
 		drawable.getIntrinsicHeight();
 
+		float values[] = new float[9];
+		matrix.getValues( values );
+
 s 0 x
 0 s y
 0 0 0
 
-private static String matrixToString( Matrix m )
-{
-	String s = "";
-	float values[] = new float[9];
-	m.getValues( values );
-	for( int n = 0, l = values.length; n < l; ++n )
-		s += values[n]+",";
-	return s;
-}
+		scale = values[0];
+		x = values[2];
+		y = values[5];
 */
 }
