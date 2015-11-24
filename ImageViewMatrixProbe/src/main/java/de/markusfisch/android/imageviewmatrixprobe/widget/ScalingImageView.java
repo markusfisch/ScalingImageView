@@ -3,17 +3,16 @@ package de.markusfisch.android.imageviewmatrixprobe.widget;
 import android.content.Context;
 import android.graphics.Matrix;
 import android.util.AttributeSet;
+import android.util.SparseArray;
 import android.view.MotionEvent;
 import android.widget.ImageView;
 
 public class ScalingImageView extends ImageView
 {
-	private static final int MAX_POINTERS = 24;
-
 	private final Matrix origin = new Matrix();
 	private final Matrix transformed = new Matrix();
-	private final float originX[] = new float[MAX_POINTERS];
-	private final float originY[] = new float[MAX_POINTERS];
+	private final SparseArray<Float> originX = new SparseArray<Float>();
+	private final SparseArray<Float> originY = new SparseArray<Float>();
 	private final Length originLength = new Length();
 	private final Length length = new Length();
 
@@ -28,22 +27,18 @@ public class ScalingImageView extends ImageView
 	@Override
 	public boolean onTouchEvent( MotionEvent event )
 	{
-		final int pointerCount = Math.min(
-			event.getPointerCount(),
-			MAX_POINTERS-1 );
-		int ignore = -1;
+		final int pointerCount = event.getPointerCount();
+		int ignorePointer = -1;
 
 		switch( event.getActionMasked() )
 		{
 			// the number of pointers changed so
 			// (re)initialize the transformation
 			case MotionEvent.ACTION_POINTER_UP:
-				ignore = event.getActionIndex();
+				ignorePointer = event.getActionIndex();
 			case MotionEvent.ACTION_DOWN:
 			case MotionEvent.ACTION_POINTER_DOWN:
-				setOriginMatrix();
-				setPointerOrigins( event, pointerCount );
-				setOriginLength( event, pointerCount, ignore );
+				initTransform( event, pointerCount, ignorePointer );
 				return true;
 			// the position of the pointer(s) changed
 			// so transform accordingly
@@ -59,43 +54,35 @@ public class ScalingImageView extends ImageView
 		return onTouchEvent( event );
 	}
 
-	//private void initTransform( MotionEvent event, int pointerCount )
-
-	private void setOriginMatrix()
+	private void initTransform(
+		MotionEvent event,
+		int pointerCount,
+		int ignorePointer )
 	{
 		origin.set( transformed );
-	}
 
-	private void setPointerOrigins( MotionEvent event, int pointerCount )
-	{
 		for( int n = pointerCount; n-- > 0; )
 		{
 			int id = event.getPointerId( n );
 
-			originX[id] = event.getX( n );
-			originY[id] = event.getY( n );
+			originX.put( id, event.getX( n ) );
+			originY.put( id, event.getY( n ) );
 		}
-	}
 
-	private void setOriginLength(
-		MotionEvent event,
-		int pointerCount,
-		int ignore )
-	{
 		if( pointerCount < 2 )
 			return;
 
 		int p1 = 0;
 		int p2 = 1;
 
-		if( ignore > -1 &&
+		if( ignorePointer > -1 &&
 			pointerCount > 2 )
 		{
 			p1 = p2 = 0xffff;
 
 			for( int n = 0; n < pointerCount; ++n )
 			{
-				if( n != ignore )
+				if( n != ignorePointer )
 				{
 					if( p1 == 0xffff )
 						p1 = n;
@@ -121,8 +108,8 @@ public class ScalingImageView extends ImageView
 		{
 			int id = event.getPointerId( 0 );
 			transformed.postTranslate(
-				event.getX( 0 )-originX[id],
-				event.getY( 0 )-originY[id] );
+				event.getX( 0 )-originX.get( id ),
+				event.getY( 0 )-originY.get( id ) );
 		}
 		else if( pointerCount > 1 )
 		{
