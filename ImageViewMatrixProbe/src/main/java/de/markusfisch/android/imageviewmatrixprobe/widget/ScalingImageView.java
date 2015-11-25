@@ -13,8 +13,8 @@ public class ScalingImageView extends ImageView
 	private final Matrix transformMatrix = new Matrix();
 	private final SparseArray<Float> originX = new SparseArray<Float>();
 	private final SparseArray<Float> originY = new SparseArray<Float>();
-	private final Length originLength = new Length();
-	private final Length transformLength = new Length();
+	private final Gesture originGesture = new Gesture();
+	private final Gesture transformGesture = new Gesture();
 
 	public ScalingImageView( Context context, AttributeSet attr )
 	{
@@ -61,40 +61,28 @@ public class ScalingImageView extends ImageView
 	{
 		originMatrix.set( transformMatrix );
 
-		for( int n = pointerCount; n-- > 0; )
+		int p1 = 0xffff;
+		int p2 = 0xffff;
+
+		for( int n = 0; n < pointerCount; ++n )
 		{
 			int id = event.getPointerId( n );
 
 			originX.put( id, event.getX( n ) );
 			originY.put( id, event.getY( n ) );
+
+			if( n == ignoreIndex ||
+				p2 != 0xffff )
+				continue;
+
+			if( p1 == 0xffff )
+				p1 = n;
+			else if( p2 == 0xffff )
+				p2 = n;
 		}
 
-		if( pointerCount < 2 )
-			return;
-
-		int p1 = 0;
-		int p2 = 1;
-
-		if( ignoreIndex > -1 &&
-			pointerCount > 2 )
-		{
-			p1 = p2 = 0xffff;
-
-			for( int n = 0; n < pointerCount; ++n )
-			{
-				if( n != ignoreIndex )
-				{
-					if( p1 == 0xffff )
-						p1 = n;
-					else if( p2 == 0xffff )
-						p2 = n;
-					else
-						break;
-				}
-			}
-		}
-
-		originLength.set( event, p1, p2 );
+		if( p2 != 0xffff )
+			originGesture.set( event, p1, p2 );
 	}
 
 	private void transformImage( MotionEvent event, int pointerCount )
@@ -113,24 +101,24 @@ public class ScalingImageView extends ImageView
 		}
 		else if( pointerCount > 1 )
 		{
-			transformLength.set( event, 0, 1 );
+			transformGesture.set( event, 0, 1 );
 
-			float d = transformLength.length/originLength.length;
+			float d = transformGesture.length/originGesture.length;
 			transformMatrix.postScale(
 				d,
 				d,
-				originLength.pivotX,
-				originLength.pivotY );
+				originGesture.pivotX,
+				originGesture.pivotY );
 
 			transformMatrix.postTranslate(
-				transformLength.pivotX-originLength.pivotX,
-				transformLength.pivotY-originLength.pivotY );
+				transformGesture.pivotX-originGesture.pivotX,
+				transformGesture.pivotY-originGesture.pivotY );
 		}
 
 		setImageMatrix( transformMatrix );
 	}
 
-	private class Length
+	private class Gesture
 	{
 		public float length;
 		public float pivotX;
