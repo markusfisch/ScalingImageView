@@ -49,7 +49,7 @@ public class ScalingImageView extends ImageView
 			// the position of the pointer(s) changed
 			// so transform accordingly
 			case MotionEvent.ACTION_MOVE:
-				transformImage( event, pointerCount );
+				transform( event, pointerCount );
 				return true;
 			// end of transformation
 			case MotionEvent.ACTION_CANCEL:
@@ -79,11 +79,13 @@ public class ScalingImageView extends ImageView
 			return;
 
 		bounds.set( left, top, right, bottom );
-		centerInside( getDrawable(), bounds );
+		centerInside( bounds );
 	}
 
-	protected void centerInside( Drawable drawable, RectF rect )
+	protected void centerInside( RectF rect )
 	{
+		Drawable drawable = getDrawable();
+
 		if( drawable == null )
 			return;
 
@@ -139,13 +141,14 @@ public class ScalingImageView extends ImageView
 			originGesture.set( event, p1, p2 );
 	}
 
-	private void transformImage( MotionEvent event, int pointerCount )
+	private void transform( MotionEvent event, int pointerCount )
 	{
 		transformMatrix.set( originMatrix );
 
 		if( pointerCount == 1 )
 		{
 			int id = event.getPointerId( 0 );
+
 			transformMatrix.postTranslate(
 				event.getX( 0 )-originX.get( id ),
 				event.getY( 0 )-originY.get( id ) );
@@ -157,6 +160,7 @@ public class ScalingImageView extends ImageView
 			float scale =
 				transformGesture.length/
 				originGesture.length;
+
 			transformMatrix.postScale(
 				scale,
 				scale,
