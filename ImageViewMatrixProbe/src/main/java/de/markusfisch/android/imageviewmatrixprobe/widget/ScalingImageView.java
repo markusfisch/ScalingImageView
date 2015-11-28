@@ -1,8 +1,10 @@
 package de.markusfisch.android.imageviewmatrixprobe.widget;
 
 import android.content.Context;
+import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.graphics.Matrix;
+import android.graphics.Paint;
 import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.util.SparseArray;
@@ -19,6 +21,7 @@ public class ScalingImageView extends ImageView
 	private final Gesture transformGesture = new Gesture();
 	private final RectF bounds = new RectF();
 	private final float values[] = new float[9];
+	private final Paint boundsPaint = new Paint( Paint.ANTI_ALIAS_FLAG );
 
 	private float drawableWidth;
 	private float drawableHeight;
@@ -30,6 +33,9 @@ public class ScalingImageView extends ImageView
 		super( context, attr );
 
 		setScaleType( ImageView.ScaleType.MATRIX );
+
+		boundsPaint.setStyle( Paint.Style.STROKE );
+		boundsPaint.setColor( 0x88ffffff );
 	}
 
 	@Override
@@ -84,11 +90,19 @@ public class ScalingImageView extends ImageView
 		if( !changed )
 			return;
 
-		bounds.set( left, top, right, bottom );
-		centerInside( bounds );
+		bounds.set( left+64, top+64, right-64, bottom-64 );
+		centerCrop( bounds );
 	}
 
-	protected void centerInside( RectF rect )
+	@Override
+	public void onDraw( Canvas canvas )
+	{
+		super.onDraw( canvas );
+
+		canvas.drawRect( bounds, boundsPaint );
+	}
+
+	protected void centerCrop( RectF rect )
 	{
 		Drawable drawable = getDrawable();
 
@@ -104,7 +118,7 @@ public class ScalingImageView extends ImageView
 		centerVertical = rw*drawableHeight < rh*drawableWidth;
 
 		minScale = drawableWidth > rw || drawableHeight > rh ?
-			Math.min(
+			Math.max(
 				rw/drawableWidth,
 				rh/drawableHeight ) :
 			1f;
@@ -209,27 +223,17 @@ public class ScalingImageView extends ImageView
 		float x = values[Matrix.MTRANS_X];
 		float y = values[Matrix.MTRANS_Y];
 
-		float w = scale*drawableWidth;
-		float h = scale*drawableHeight;
-		float minX = rect.width()-w;
-		float minY = rect.height()-h;
+		float minX = rect.right-scale*drawableWidth;
+		float minY = rect.bottom-scale*drawableHeight;
 
 		if( centerVertical )
-		{
 			matrix.postTranslate(
 				Math.max( minX-x, Math.min( rect.left-x, 0 ) ),
-				minY < 0 ?
-					Math.min( rect.top-y, Math.max( minY-y, 0 ) ) :
-					Math.max( rect.top-y, Math.min( minY-y, 0 ) ) );
-		}
+				Math.min( rect.top-y, Math.max( minY-y, 0 ) ) );
 		else
-		{
 			matrix.postTranslate(
-				minX < 0 ?
-					Math.min( rect.left-x, Math.max( minX-x, 0 ) ) :
-					Math.max( rect.left-x, Math.min( minX-x, 0 ) ),
+				Math.min( rect.left-x, Math.max( minX-x, 0 ) ),
 				Math.max( minY-y, Math.min( rect.top-y, 0 ) ) );
-		}
 	}
 
 	private class Gesture
