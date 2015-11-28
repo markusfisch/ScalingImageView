@@ -18,6 +18,11 @@ public class ScalingImageView extends ImageView
 	private final Gesture originGesture = new Gesture();
 	private final Gesture transformGesture = new Gesture();
 	private final RectF bounds = new RectF();
+	private final float values[] = new float[9];
+
+	private float drawableWidth;
+	private float drawableHeight;
+	private float minScale;
 
 	public ScalingImageView( Context context, AttributeSet attr )
 	{
@@ -89,20 +94,22 @@ public class ScalingImageView extends ImageView
 		if( drawable == null )
 			return;
 
-		float dw = drawable.getIntrinsicWidth();
-		float dh = drawable.getIntrinsicHeight();
+		drawableWidth = drawable.getIntrinsicWidth();
+		drawableHeight = drawable.getIntrinsicHeight();
+
 		float rw = rect.width();
 		float rh = rect.height();
-		float scale = dw > rw || dh > rh ?
+
+		minScale = drawableWidth > rw || drawableHeight > rh ?
 			Math.min(
-				(float)rw/(float)dw,
-				(float)rh/(float)dh ) :
+				rw/drawableWidth,
+				rh/drawableHeight ) :
 			1f;
 
-		transformMatrix.setScale( scale, scale );
+		transformMatrix.setScale( minScale, minScale );
 		transformMatrix.postTranslate(
-			rect.left+Math.round( (rw - dw*scale)*.5f ),
-			rect.top+Math.round( (rh - dh*scale)*.5f ) );
+			rect.left+Math.round( (rw - drawableWidth*minScale)*.5f ),
+			rect.top+Math.round( (rh - drawableHeight*minScale)*.5f ) );
 
 		setImageMatrix( transformMatrix );
 	}
@@ -144,32 +151,67 @@ public class ScalingImageView extends ImageView
 	private void transform( MotionEvent event, int pointerCount )
 	{
 		transformMatrix.set( originMatrix );
+		transformMatrix.getValues( values );
+
+		float scale = values[Matrix.MSCALE_X];
+		float dx = 0;
+		float dy = 0;
 
 		if( pointerCount == 1 )
 		{
 			int id = event.getPointerId( 0 );
 
-			transformMatrix.postTranslate(
-				event.getX( 0 )-originX.get( id ),
-				event.getY( 0 )-originY.get( id ) );
+			dx = event.getX( 0 )-originX.get( id );
+			dy = event.getY( 0 )-originY.get( id );
 		}
 		else if( pointerCount > 1 )
 		{
 			transformGesture.set( event, 0, 1 );
 
-			float scale =
+			float mod =
 				transformGesture.length/
 				originGesture.length;
 
+			if( mod*scale < minScale )
+			{
+				mod = minScale/scale;
+				scale = minScale;
+			}
+			else
+				scale *= mod;
+
 			transformMatrix.postScale(
-				scale,
-				scale,
+				mod,
+				mod,
 				originGesture.pivotX,
 				originGesture.pivotY );
 
-			transformMatrix.postTranslate(
-				transformGesture.pivotX-originGesture.pivotX,
-				transformGesture.pivotY-originGesture.pivotY );
+			dx = transformGesture.pivotX-originGesture.pivotX;
+			dy = transformGesture.pivotY-originGesture.pivotY;
+		}
+
+		// align to bounds
+		{
+			float minX = bounds.width()-drawableWidth*scale;
+			float minY = bounds.height()-drawableHeight*scale;
+
+			float ox = values[Matrix.MTRANS_X];
+			float x = ox+dx;
+			float oy = values[Matrix.MTRANS_Y];
+			float y = ox+dy;
+
+			if( x > bounds.left )
+			{
+				dx = bounds.left-ox;
+			}
+			/*else if( x < minX )
+			{
+android.util.Log.d( "mfdbg", "mfdbg: dx("+dx+") x("+x+") < minX("+minX+") = dx'("+(minX-ox)+")" );
+				dx = minX-ox;
+			}*/
+
+android.util.Log.d( "mfdbg", "mfdbg: dx("+dx+") x("+x+")" );
+			transformMatrix.postTranslate( dx, dy );
 		}
 
 		setImageMatrix( transformMatrix );
