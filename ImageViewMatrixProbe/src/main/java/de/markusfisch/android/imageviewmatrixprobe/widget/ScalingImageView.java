@@ -251,7 +251,7 @@ public class ScalingImageView extends ImageView
 				dy = Math.max( minY-y, Math.min( bounds.top-y, 0 ) );
 			}
 		}
-		else
+		else if( scaleType == ImageView.ScaleType.CENTER_CROP )
 		{
 			if( centersVertical )
 			{
