@@ -25,7 +25,7 @@ public class ScalingImageView extends ImageView
 
 	private float drawableWidth;
 	private float drawableHeight;
-	private boolean centerVertical;
+	private boolean centersVertical;
 	private float minScale;
 
 	public ScalingImageView( Context context, AttributeSet attr )
@@ -87,9 +87,6 @@ public class ScalingImageView extends ImageView
 			right,
 			bottom );
 
-		if( !changed )
-			return;
-
 		bounds.set( left+64, top+64, right-64, bottom-64 );
 		centerCrop( bounds );
 	}
@@ -115,7 +112,7 @@ public class ScalingImageView extends ImageView
 		float rw = rect.width();
 		float rh = rect.height();
 
-		centerVertical = rw*drawableHeight < rh*drawableWidth;
+		centersVertical = rw*drawableHeight < rh*drawableWidth;
 
 		minScale = drawableWidth > rw || drawableHeight > rh ?
 			Math.max(
@@ -226,7 +223,7 @@ public class ScalingImageView extends ImageView
 		float minX = rect.right-scale*drawableWidth;
 		float minY = rect.bottom-scale*drawableHeight;
 
-		if( centerVertical )
+		if( centersVertical )
 			matrix.postTranslate(
 				Math.max( minX-x, Math.min( rect.left-x, 0 ) ),
 				Math.min( rect.top-y, Math.max( minY-y, 0 ) ) );
