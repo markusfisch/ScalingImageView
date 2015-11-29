@@ -118,6 +118,11 @@ public class ScalingImageView extends ImageView
 		bounds.set( rect );
 	}
 
+	protected RectF getBounds()
+	{
+		return bounds;
+	}
+
 	protected void center( RectF rect )
 	{
 		Drawable drawable = getDrawable();
