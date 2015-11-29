@@ -100,8 +100,22 @@ public class ScalingImageView extends ImageView
 			right,
 			bottom );
 
-		bounds.set( left, top, right, bottom );
+		setBounds( left, top, right, bottom );
 		center( bounds );
+	}
+
+	protected void setBounds(
+		float left,
+		float top,
+		float right,
+		float bottom )
+	{
+		bounds.set( left, top, right, bottom );
+	}
+
+	protected void setBounds( RectF rect )
+	{
+		bounds.set( rect );
 	}
 
 	protected void center( RectF rect )
