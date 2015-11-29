@@ -1,1 +1,1 @@
-include ':ImageViewMatrixProbe'
+include ':ScalingImageView'

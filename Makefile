@@ -1,5 +1,5 @@
-PACKAGE = de.markusfisch.android.imageviewmatrixprobe
-APK = ImageViewMatrixProbe/build/outputs/apk/ImageViewMatrixProbe-debug.apk
+PACKAGE = de.markusfisch.android.scalingimageview
+APK = ScalingImageView/build/outputs/apk/ScalingImageView-debug.apk
 
 all: debug install start
 

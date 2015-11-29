@@ -1,4 +1,4 @@
-package de.markusfisch.android.imageviewmatrixprobe.widget;
+package de.markusfisch.android.scalingimageview.widget;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
