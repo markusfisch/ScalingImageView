@@ -46,6 +46,12 @@ public class ScalingImageView extends ImageView
 	}
 
 	@Override
+	public ScaleType getScaleType()
+	{
+		return scaleType;
+	}
+
+	@Override
 	public boolean onTouchEvent( MotionEvent event )
 	{
 		final int pointerCount = event.getPointerCount();
