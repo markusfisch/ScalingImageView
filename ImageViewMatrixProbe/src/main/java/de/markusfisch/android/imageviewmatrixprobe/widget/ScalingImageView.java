@@ -1,10 +1,7 @@
 package de.markusfisch.android.imageviewmatrixprobe.widget;
 
 import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.drawable.Drawable;
 import android.graphics.Matrix;
-import android.graphics.Paint;
 import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.util.SparseArray;
@@ -13,29 +10,19 @@ import android.widget.ImageView;
 
 public class ScalingImageView extends ImageView
 {
+	protected final Matrix transformMatrix = new Matrix();
+
 	private final Matrix originMatrix = new Matrix();
-	private final Matrix transformMatrix = new Matrix();
 	private final SparseArray<Float> originX = new SparseArray<Float>();
 	private final SparseArray<Float> originY = new SparseArray<Float>();
 	private final Gesture originGesture = new Gesture();
 	private final Gesture transformGesture = new Gesture();
-	private final RectF bounds = new RectF();
-	private final float values[] = new float[9];
-	private final Paint boundsPaint = new Paint( Paint.ANTI_ALIAS_FLAG );
-
-	private float drawableWidth;
-	private float drawableHeight;
-	private boolean centersVertical;
-	private float minScale;
 
 	public ScalingImageView( Context context, AttributeSet attr )
 	{
 		super( context, attr );
 
 		setScaleType( ImageView.ScaleType.MATRIX );
-
-		boundsPaint.setStyle( Paint.Style.STROKE );
-		boundsPaint.setColor( 0x88ffffff );
 	}
 
 	@Override
@@ -72,60 +59,13 @@ public class ScalingImageView extends ImageView
 		return onTouchEvent( event );
 	}
 
-	@Override
-	protected void onLayout(
-		boolean changed,
-		int left,
-		int top,
-		int right,
-		int bottom )
+	protected float fitScale( Matrix matrix, float scale )
 	{
-		super.onLayout(
-			changed,
-			left,
-			top,
-			right,
-			bottom );
-
-		bounds.set( left+64, top+64, right-64, bottom-64 );
-		centerCrop( bounds );
+		return scale;
 	}
 
-	@Override
-	public void onDraw( Canvas canvas )
+	protected void fitRect( Matrix matrix )
 	{
-		super.onDraw( canvas );
-
-		canvas.drawRect( bounds, boundsPaint );
-	}
-
-	protected void centerCrop( RectF rect )
-	{
-		Drawable drawable = getDrawable();
-
-		if( drawable == null )
-			return;
-
-		drawableWidth = drawable.getIntrinsicWidth();
-		drawableHeight = drawable.getIntrinsicHeight();
-
-		float rw = rect.width();
-		float rh = rect.height();
-
-		centersVertical = rw*drawableHeight < rh*drawableWidth;
-
-		minScale = drawableWidth > rw || drawableHeight > rh ?
-			Math.max(
-				rw/drawableWidth,
-				rh/drawableHeight ) :
-			1f;
-
-		transformMatrix.setScale( minScale, minScale );
-		transformMatrix.postTranslate(
-			rect.left+Math.round( (rw - drawableWidth*minScale)*.5f ),
-			rect.top+Math.round( (rh - drawableHeight*minScale)*.5f ) );
-
-		setImageMatrix( transformMatrix );
 	}
 
 	private void initTransform(
@@ -178,9 +118,9 @@ public class ScalingImageView extends ImageView
 		{
 			transformGesture.set( event, 0, 1 );
 
-			float scale =
-				transformGesture.length/
-				originGesture.length;
+			float scale = fitScale(
+				originMatrix,
+				transformGesture.length/originGesture.length );
 
 			transformMatrix.postScale(
 				scale,
@@ -188,49 +128,14 @@ public class ScalingImageView extends ImageView
 				originGesture.pivotX,
 				originGesture.pivotY );
 
-			transformMatrix.getValues( values );
-			scale = values[Matrix.MSCALE_X];
-
-			if( scale < minScale )
-			{
-				scale = minScale/scale;
-
-				transformMatrix.postScale(
-					scale,
-					scale,
-					originGesture.pivotX,
-					originGesture.pivotY );
-			}
-
 			transformMatrix.postTranslate(
 				transformGesture.pivotX-originGesture.pivotX,
 				transformGesture.pivotY-originGesture.pivotY );
 		}
 
-		fitRect( transformMatrix, bounds );
+		fitRect( transformMatrix );
 
 		setImageMatrix( transformMatrix );
-	}
-
-	private void fitRect( Matrix matrix, RectF rect )
-	{
-		matrix.getValues( values );
-
-		float scale = values[Matrix.MSCALE_X];
-		float x = values[Matrix.MTRANS_X];
-		float y = values[Matrix.MTRANS_Y];
-
-		float minX = rect.right-scale*drawableWidth;
-		float minY = rect.bottom-scale*drawableHeight;
-
-		if( centersVertical )
-			matrix.postTranslate(
-				Math.max( minX-x, Math.min( rect.left-x, 0 ) ),
-				Math.min( rect.top-y, Math.max( minY-y, 0 ) ) );
-		else
-			matrix.postTranslate(
-				Math.min( rect.left-x, Math.max( minX-x, 0 ) ),
-				Math.max( minY-y, Math.min( rect.top-y, 0 ) ) );
 	}
 
 	private class Gesture
