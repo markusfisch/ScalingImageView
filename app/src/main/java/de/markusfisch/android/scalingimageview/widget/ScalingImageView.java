@@ -27,11 +27,35 @@ public class ScalingImageView extends ImageView
 	private ImageView.ScaleType scaleType =
 		ImageView.ScaleType.CENTER_INSIDE;
 
-	public ScalingImageView( Context context, AttributeSet attr )
+	public ScalingImageView( Context context )
 	{
-		super( context, attr );
+		super( context );
+		init();
+	}
 
-		super.setScaleType( ImageView.ScaleType.MATRIX );
+	public ScalingImageView( Context context, AttributeSet attrs )
+	{
+		super( context, attrs );
+		init();
+	}
+
+	public ScalingImageView(
+		Context context,
+		AttributeSet attrs,
+		int defStyleAttr )
+	{
+		super( context, attrs, defStyleAttr );
+		init();
+	}
+
+	public ScalingImageView(
+		Context context,
+		AttributeSet attrs,
+		int defStyleAttr,
+		int defStyleRes )
+	{
+		super( context, attrs, defStyleAttr, defStyleRes );
+		init();
 	}
 
 	@Override
@@ -125,9 +149,10 @@ public class ScalingImageView extends ImageView
 
 	protected void center( RectF rect )
 	{
-		Drawable drawable = getDrawable();
+		Drawable drawable;
 
-		if( drawable == null )
+		if( rect == null ||
+			(drawable = getDrawable()) == null )
 			return;
 
 		drawableWidth = drawable.getIntrinsicWidth();
@@ -154,6 +179,11 @@ public class ScalingImageView extends ImageView
 			rect.top+Math.round( (rh - drawableHeight*minScale)*.5f ) );
 
 		setImageMatrix( transformMatrix );
+	}
+
+	private void init()
+	{
+		super.setScaleType( ImageView.ScaleType.MATRIX );
 	}
 
 	private void initTransform(
