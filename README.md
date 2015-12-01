@@ -31,7 +31,7 @@ How to use
 Just drop de.markusfisch.android.scalingimageview.widget.ScalingImageView
 into your project and use it instead of an ImageView.
 
-May be in a layout:
+Maybe in a layout:
 
 	<de.markusfisch.android.scalingimageview.widget.ScalingImageView
 		xmlns:android="http://schemas.android.com/apk/res/android"
@@ -45,8 +45,9 @@ Or just from source:
 
 Changing the scale type must happen in source since reading attributes
 would require a [declare-styleable][styleable] resource and a bit of
-overhead I think would outweigh it's value for this tiny class. So you
-need to call setScaleType() like this:
+overhead I think would outweigh its value for this.
+
+So you need to call setScaleType() like this:
 
 	scalingImageView.setScaleType( ImageView.ScaleType.CENTER_CROP );
 
