@@ -4,6 +4,8 @@ ScalingImageView
 An android.widget.ImageView that transforms its drawable according to
 user input.
 
+![Screencast](http://markusfisch.github.io/ScalingImageView/screencast.gif)
+
 Only ImageView.ScaleType.CENTER_INSIDE:
 
 	    +-------+ FRAME
