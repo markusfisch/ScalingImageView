@@ -4,6 +4,7 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.graphics.Matrix;
+import android.graphics.Rect;
 import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.util.SparseArray;
@@ -127,6 +128,21 @@ public class ScalingImageView extends ImageView
 
 		setBounds( left, top, right, bottom );
 		center( bounds );
+	}
+
+	public Rect getRectInBounds()
+	{
+		transformMatrix.getValues( values );
+
+		float scale = values[Matrix.MSCALE_X];
+		float x = values[Matrix.MTRANS_X];
+		float y = values[Matrix.MTRANS_Y];
+
+		return new Rect(
+			Math.round( (bounds.left-x)/scale ),
+			Math.round( (bounds.top-y)/scale ),
+			Math.round( (bounds.right-x)/scale ),
+			Math.round( (bounds.bottom-y)/scale ) );
 	}
 
 	protected void setBounds(
