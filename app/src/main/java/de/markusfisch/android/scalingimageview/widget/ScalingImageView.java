@@ -22,7 +22,6 @@ public class ScalingImageView extends ImageView
 
 	private float drawableWidth;
 	private float drawableHeight;
-	private boolean centersVertical;
 	private float minScale;
 	private ImageView.ScaleType scaleType =
 		ImageView.ScaleType.CENTER_INSIDE;
@@ -161,17 +160,18 @@ public class ScalingImageView extends ImageView
 		float rw = rect.width();
 		float rh = rect.height();
 
-		centersVertical = rw*drawableHeight < rh*drawableWidth;
-
-		minScale = drawableWidth > rw || drawableHeight > rh ?
-			scaleType == ImageView.ScaleType.CENTER_INSIDE ?
+		if( scaleType == ImageView.ScaleType.CENTER_INSIDE )
+			minScale = drawableWidth > rw || drawableHeight > rh ?
 				Math.min(
 					rw/drawableWidth,
 					rh/drawableHeight ) :
-				Math.max(
-					rw/drawableWidth,
-					rh/drawableHeight ) :
-			1f;
+				1f;
+		else if( scaleType == ImageView.ScaleType.CENTER_CROP )
+			minScale = Math.max(
+				rw/drawableWidth,
+				rh/drawableHeight );
+		else
+			throw new UnsupportedOperationException();
 
 		transformMatrix.setScale( minScale, minScale );
 		transformMatrix.postTranslate(
@@ -274,45 +274,18 @@ public class ScalingImageView extends ImageView
 		float scale = values[Matrix.MSCALE_X];
 		float x = values[Matrix.MTRANS_X];
 		float y = values[Matrix.MTRANS_Y];
-		float w = scale*drawableWidth;
-		float h = scale*drawableHeight;
+		float w = Math.round( scale*drawableWidth );
+		float h = Math.round( scale*drawableHeight );
 		float bw = bounds.width();
 		float bh = bounds.height();
 		float minX = bounds.right-w;
 		float minY = bounds.bottom-h;
-		float dx = 0;
-		float dy = 0;
-
-		if( scaleType == ImageView.ScaleType.CENTER_INSIDE )
-		{
-			if( centersVertical )
-			{
-				dx = Math.max( minX-x, Math.min( bounds.left-x, 0 ) );
-				dy = h > bh ?
-					Math.max( minY-y, Math.min( bounds.top-y, 0 ) ) :
-					(bounds.top+Math.round( (bh-h)*.5f ))-y;
-			}
-			else
-			{
-				dx = w > bw ?
-					Math.max( minY-y, Math.min( bounds.top-y, 0 ) ) :
-					(bounds.left+Math.round( (bw-w)*.5f ))-x;
-				dy = Math.max( minY-y, Math.min( bounds.top-y, 0 ) );
-			}
-		}
-		else if( scaleType == ImageView.ScaleType.CENTER_CROP )
-		{
-			if( centersVertical )
-			{
-				dx = Math.max( minX-x, Math.min( bounds.left-x, 0 ) );
-				dy = Math.min( bounds.top-y, Math.max( minY-y, 0 ) );
-			}
-			else
-			{
-				dx = Math.min( bounds.left-x, Math.max( minX-x, 0 ) );
-				dy = Math.max( minY-y, Math.min( bounds.top-y, 0 ) );
-			}
-		}
+		float dx = w > bw ?
+			Math.max( minX-x, Math.min( bounds.left-x, 0 ) ) :
+			(bounds.left+Math.round( (bw-w)*.5f ))-x;
+		float dy = h > bh ?
+			Math.max( minY-y, Math.min( bounds.top-y, 0 ) ) :
+			(bounds.top+Math.round( (bh-h)*.5f ))-y;
 
 		if( dx != 0 || dy != 0 )
 		{
