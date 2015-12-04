@@ -1,5 +1,6 @@
 package de.markusfisch.android.scalingimageview.widget;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.graphics.Matrix;
@@ -47,6 +48,7 @@ public class ScalingImageView extends ImageView
 		init();
 	}
 
+	@TargetApi( 21 )
 	public ScalingImageView(
 		Context context,
 		AttributeSet attrs,
