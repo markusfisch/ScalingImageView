@@ -6,17 +6,23 @@ user input.
 
 ![Screencast](http://markusfisch.github.io/ScalingImageView/screencast.gif)
 
-Only ImageView.ScaleType.CENTER_INSIDE:
+Only [ImageView.ScaleType.CENTER][scaletype]:
+
+> Center the image in the view, but perform no scaling.
 
 	    +-------+ FRAME
 	    |       |
-	    +-------+
-	    | IMAGE |
-	    +-------+
+	  +-|-------|-+
+	  | | IMAGE | |
+	  +-|-------|-+
 	    |       |
 	    +-------+
 
-And ImageView.ScaleType.CENTER_CROP are supported:
+And [ImageView.ScaleType.CENTER_CROP][scaletype]:
+
+> Scale the image uniformly (maintain the image's aspect ratio) so that both
+> dimensions (width and height) of the image will be equal to or larger than
+> the corresponding dimension of the view.
 
 	      FRAME
 	+---+-------+---+
@@ -26,6 +32,20 @@ And ImageView.ScaleType.CENTER_CROP are supported:
 	|   |       |   |
 	|   |       |   |
 	+---+-------+---+
+
+And [ImageView.ScaleType.CENTER_INSIDE][scaletype] (default) are supported:
+
+> Scale the image uniformly (maintain the image's aspect ratio) so that both
+> dimensions (width and height) of the image will be equal to or less than the
+> corresponding dimension of the view.
+
+	    +-------+ FRAME
+	    |       |
+	    +-------+
+	    | IMAGE |
+	    +-------+
+	    |       |
+	    +-------+
 
 How to use
 ----------
@@ -53,7 +73,8 @@ So you need to call setScaleType() like this:
 
 	scalingImageView.setScaleType( ImageView.ScaleType.CENTER_CROP );
 
-Remember, only CENTER_INSIDE and CENTER_CROP are supported.
+Remember, only CENTER, CENTER_CROP and CENTER_INSIDE are supported.
+CENTER_INSIDE is the default.
 
 Demo
 ----
@@ -67,4 +88,5 @@ License
 
 This widget is so basic, it should be Public Domain. And it is.
 
+[scaletype]: https://developer.android.com/reference/android/widget/ImageView.ScaleType.html
 [styleable]: https://developer.android.com/training/custom-views/create-view.html
