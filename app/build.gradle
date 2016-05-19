@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'findbugs'
 
 android
 {
@@ -15,4 +16,20 @@ android
 dependencies
 {
 	compile 'com.android.support:appcompat-v7:23.4.0'
+}
+
+task findbugs(type: FindBugs, dependsOn: assembleDebug) {
+	excludeFilter = file('./findbugs-exclude.xml')
+	source = fileTree('src/main/java/')
+	classes = files(
+		"${project.rootDir}/app/build/intermediates/classes")
+	classpath = files()
+
+	effort = 'default'
+
+	reports
+	{
+		xml.enabled = false
+		html.enabled = true
+	}
 }
