@@ -13,8 +13,8 @@ import android.widget.ImageView;
 
 public class ScalingImageView extends ImageView
 {
-	private final SparseArray<Float> originX = new SparseArray<Float>();
-	private final SparseArray<Float> originY = new SparseArray<Float>();
+	private final SparseArray<Float> originX = new SparseArray<>();
+	private final SparseArray<Float> originY = new SparseArray<>();
 	private final Matrix originMatrix = new Matrix();
 	private final Matrix transformMatrix = new Matrix();
 	private final Gesture originGesture = new Gesture();
@@ -177,16 +177,19 @@ public class ScalingImageView extends ImageView
 
 		// use a separate method to layout the image so it's possible
 		// to override this behaviour without skipping super.onLayout()
-		layoutImage( left, top, right, bottom );
+		layoutImage( changed, left, top, right, bottom );
 	}
 
 	protected void layoutImage(
+		boolean changed,
 		int left,
 		int top,
 		int right,
 		int bottom )
 	{
-		setBounds( left, top, right, bottom );
+		if( changed )
+			setBounds( left, top, right, bottom );
+
 		center( bounds );
 	}
 
@@ -312,7 +315,7 @@ public class ScalingImageView extends ImageView
 
 			if( p1 == 0xffff )
 				p1 = n;
-			else if( p2 == 0xffff )
+			else
 				p2 = n;
 		}
 
