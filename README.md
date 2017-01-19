@@ -61,9 +61,9 @@ Maybe in a layout:
 		android:layout_height="match_parent"
 		android:src="@drawable/your_drawable"/>
 
-Or just from source:
+Or from java:
 
-	ScalingImageView scalingImageView = new ScalingImageView( context );
+	ScalingImageView scalingImageView = new ScalingImageView(context);
 
 Changing the scale type must happen in source since reading attributes
 would require a [declare-styleable][styleable] resource and a bit of
@@ -71,7 +71,7 @@ overhead I think would outweigh its value for this.
 
 So you need to call setScaleType() like this:
 
-	scalingImageView.setScaleType( ImageView.ScaleType.CENTER_CROP );
+	scalingImageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
 Remember, only CENTER, CENTER_CROP and CENTER_INSIDE are supported.
 CENTER_INSIDE is the default.
