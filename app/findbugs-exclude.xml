@@ -8,10 +8,4 @@
 	<Match>
 		<Class name="~.android.support.*"/>
 	</Match>
-	<!-- this fall through is intentional and accordingly commented -->
-	<Match>
-		<Class name="de.markusfisch.android.scalingimageview.widget.ScalingImageView"/>
-		<Method name="onTouchEvent"/>
-		<Bug pattern="SF_SWITCH_FALLTHROUGH"/>
-	</Match>
 </FindBugsFilter>

@@ -88,17 +88,18 @@ public class ScalingImageView extends ImageView {
 		int ignoreIndex = -1;
 
 		switch (event.getActionMasked()) {
-			// the number of pointers changed so
+			// number of pointers has changed so
 			// (re)initialize the transformation
 			case MotionEvent.ACTION_POINTER_UP:
 				// ignore the pointer that has gone up
 				ignoreIndex = event.getActionIndex();
-				// fall through
+				initTransform(event, pointerCount, ignoreIndex);
+				return true;
 			case MotionEvent.ACTION_DOWN:
 			case MotionEvent.ACTION_POINTER_DOWN:
 				initTransform(event, pointerCount, ignoreIndex);
 				return true;
-			// the position of the pointer(s) changed
+			// position of the pointer(s) has changed
 			// so transform accordingly
 			case MotionEvent.ACTION_MOVE:
 				transform(event, pointerCount);
