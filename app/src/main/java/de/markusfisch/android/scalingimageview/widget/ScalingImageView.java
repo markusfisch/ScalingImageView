@@ -20,7 +20,7 @@ public class ScalingImageView extends ImageView {
 	private final Matrix transformMatrix = new Matrix();
 	private final Tapeline initialTapeline = new Tapeline();
 	private final Tapeline transformTapeline = new Tapeline();
-	private final RectF initialRect = new RectF();
+	private final RectF drawableRect = new RectF();
 	private final RectF bounds = new RectF();
 
 	private GestureDetector gestureDetector;
@@ -90,13 +90,6 @@ public class ScalingImageView extends ImageView {
 		}
 
 		switch (event.getActionMasked()) {
-			case MotionEvent.ACTION_POINTER_UP:
-				// number of pointers has changed so
-				// (re)initialize the transformation
-				initTransform(event,
-						// ignore the pointer that has gone up
-						event.getActionIndex());
-				return true;
 			case MotionEvent.ACTION_DOWN:
 				initTransform(event, -1);
 				return true;
@@ -104,9 +97,12 @@ public class ScalingImageView extends ImageView {
 				initTransform(event, -1);
 				return true;
 			case MotionEvent.ACTION_MOVE:
-				// position of the pointer(s) has changed
-				// so transform accordingly
 				transform(event);
+				return true;
+			case MotionEvent.ACTION_POINTER_UP:
+				initTransform(event,
+						// ignore the pointer that has gone up
+						event.getActionIndex());
 				return true;
 			case MotionEvent.ACTION_CANCEL:
 			case MotionEvent.ACTION_UP:
@@ -298,7 +294,7 @@ public class ScalingImageView extends ImageView {
 
 	private void initTransform(MotionEvent event, int ignoreIndex) {
 		initialMatrix.set(transformMatrix);
-		initialRect.set(getDrawableRect());
+		drawableRect.set(getDrawableRect());
 
 		// try to find two pointers that are down;
 		// event may contain a pointer that has
@@ -343,7 +339,7 @@ public class ScalingImageView extends ImageView {
 
 			float scale = fitScale(
 					initialMatrix,
-					initialRect,
+					drawableRect,
 					transformTapeline.length / initialTapeline.length);
 
 			transformMatrix.postScale(
@@ -357,7 +353,7 @@ public class ScalingImageView extends ImageView {
 					transformTapeline.pivotY - initialTapeline.pivotY);
 		}
 
-		if (fitTranslate(transformMatrix, initialRect, bounds)) {
+		if (fitTranslate(transformMatrix, drawableRect, bounds)) {
 			initTransform(event, -1);
 		}
 
