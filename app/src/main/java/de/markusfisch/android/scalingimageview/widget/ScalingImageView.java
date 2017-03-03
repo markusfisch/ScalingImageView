@@ -1,20 +1,19 @@
 package de.markusfisch.android.scalingimageview.widget;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.graphics.Matrix;
 import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.os.Build;
 import android.util.AttributeSet;
 import android.util.SparseArray;
+import android.support.v7.widget.AppCompatImageView;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.widget.ImageView;
 
-public class ScalingImageView extends ImageView {
+public class ScalingImageView extends AppCompatImageView {
 	private final SparseArray<PointF> initialPoint = new SparseArray<>();
 	private final Matrix initialMatrix = new Matrix();
 	private final Matrix transformMatrix = new Matrix();
@@ -44,16 +43,6 @@ public class ScalingImageView extends ImageView {
 			AttributeSet attrs,
 			int defStyleAttr) {
 		super(context, attrs, defStyleAttr);
-		init(context);
-	}
-
-	@TargetApi(Build.VERSION_CODES.LOLLIPOP)
-	public ScalingImageView(
-			Context context,
-			AttributeSet attrs,
-			int defStyleAttr,
-			int defStyleRes) {
-		super(context, attrs, defStyleAttr, defStyleRes);
 		init(context);
 	}
 
