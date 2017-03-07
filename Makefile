@@ -15,6 +15,9 @@ lint:
 findbugs:
 	./gradlew findBugs
 
+infer: clean
+	infer -- ./gradlew assembleDebug
+
 install:
 	adb $(TARGET) install -r $(APK)
 
