@@ -1,9 +1,7 @@
 <manifest
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools"
-	package="de.markusfisch.android.scalingimageview"
-	android:versionCode="1"
-	android:versionName="0.0.0"
+	package="de.markusfisch.android.scalingimageviewdemo"
 	android:installLocation="auto">
 	<supports-screens
 		android:resizeable="true"

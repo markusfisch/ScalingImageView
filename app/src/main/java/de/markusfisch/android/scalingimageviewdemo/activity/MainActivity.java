@@ -1,6 +1,6 @@
-package de.markusfisch.android.scalingimageview.activity;
+package de.markusfisch.android.scalingimageviewdemo.activity;
 
-import de.markusfisch.android.scalingimageview.R;
+import de.markusfisch.android.scalingimageviewdemo.R;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;

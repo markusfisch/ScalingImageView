@@ -8,11 +8,15 @@ android {
 	defaultConfig {
 		minSdkVersion 9
 		targetSdkVersion sdk_version
+
+		versionCode 1
+		versionName '0.0.0'
 	}
 }
 
 dependencies {
 	compile "com.android.support:appcompat-v7:$support_version"
+	compile project(':scalingimageview')
 }
 
 task findbugs(type: FindBugs, dependsOn: 'assembleDebug') {

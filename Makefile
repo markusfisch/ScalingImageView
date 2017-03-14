@@ -1,4 +1,4 @@
-PACKAGE = de.markusfisch.android.scalingimageview
+PACKAGE = de.markusfisch.android.scalingimageviewdemo
 APK = app/build/outputs/apk/app-debug.apk
 
 all: debug install start
