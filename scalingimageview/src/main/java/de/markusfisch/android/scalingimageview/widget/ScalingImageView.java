@@ -101,14 +101,26 @@ public class ScalingImageView extends AppCompatImageView {
 		return super.onTouchEvent(event);
 	}
 
+	/**
+	 * Set multiplier for how much a double tap will magnify the image.
+	 * Default is 4.
+	 *
+	 * @param scale magnifying scale
+	 */
 	public void setMagnifyScale(float scale) {
 		magnifyScale = scale;
 	}
 
+	/** Return double tap magnification multiplier */
 	public float getMagnifyScale() {
 		return magnifyScale;
 	}
 
+	/**
+	 * Set image rotation
+	 *
+	 * @param degrees rotation in degrees
+	 */
 	public void setImageRotation(float degrees) {
 		if (degrees == rotation) {
 			return;
@@ -118,10 +130,12 @@ public class ScalingImageView extends AppCompatImageView {
 		requestLayout();
 	}
 
+	/** Return current image rotation */
 	public float getImageRotation() {
 		return rotation;
 	}
 
+	/** Return rectangle in image that is in view bounds */
 	public Rect getRectInBounds() {
 		RectF srcRect = getDrawableRect();
 		RectF dstRect = new RectF();
@@ -135,6 +149,7 @@ public class ScalingImageView extends AppCompatImageView {
 				Math.round((bounds.bottom - dstRect.top) / scale));
 	}
 
+	/** Return normalized rectangle in image that is in view bounds */
 	public RectF getNormalizedRectInBounds() {
 		RectF dstRect = getMappedRect();
 		float w = dstRect.width();
@@ -160,6 +175,15 @@ public class ScalingImageView extends AppCompatImageView {
 		layoutImage(changed, left, top, right, bottom);
 	}
 
+	/**
+	 * Layout image
+	 *
+	 * @param changed true when layout has changed
+	 * @param left layout left coordinate
+	 * @param top layout top coordinate
+	 * @param right layout right coordinate
+	 * @param bottom layout bottom coordinate
+	 */
 	protected void layoutImage(
 			boolean changed,
 			int left,
@@ -173,6 +197,14 @@ public class ScalingImageView extends AppCompatImageView {
 		center(bounds);
 	}
 
+	/**
+	 * Set bounds in whose to draw image in view
+	 *
+	 * @param left left coordinate in view
+	 * @param top top coordinate in view
+	 * @param right right coordinate in view
+	 * @param bottom bottom coordinate in view
+	 */
 	protected void setBounds(
 			float left,
 			float top,
@@ -181,23 +213,42 @@ public class ScalingImageView extends AppCompatImageView {
 		bounds.set(left, top, right, bottom);
 	}
 
+	/**
+	 * Set bounds in whose to draw image in view
+	 *
+	 * @param rect rectangle in view
+	 */
 	protected void setBounds(RectF rect) {
 		bounds.set(rect);
 	}
 
+	/** Return bounds in whose to draw image in view */
 	protected RectF getBounds() {
 		return bounds;
 	}
 
+	/**
+	 * Center image in given rectangle
+	 *
+	 * @param rect reference rectangle
+	 */
 	protected void center(RectF rect) {
 		setMinWidth(rect, transformMatrix);
 		super.setImageMatrix(transformMatrix);
 	}
 
+	/** Return true if image is completely in bounds (means not zoomed) */
 	protected boolean inBounds() {
 		return getMappedRect().width() <= minWidth;
 	}
 
+	/**
+	 * Calculate minimum image width.
+	 * The image should never be scaled below this width.
+	 *
+	 * @param rect minimum rectangle in view
+	 * @param matrix resulting matrix
+	 */
 	protected void setMinWidth(RectF rect, Matrix matrix) {
 		// don't try to store the drawable dimensions by overriding
 		// setImageDrawable() since it is called in the ImageView's
