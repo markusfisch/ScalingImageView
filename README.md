@@ -1,5 +1,4 @@
-ScalingImageView
-================
+# ScalingImageView
 
 An ImageView that transforms its drawable according to touch input.
 
@@ -28,8 +27,17 @@ Then add the dependency in your app/build.gradle:
 
 ### Manually
 
-Just drop [ScalingImageView.java][src] into your project and use it instead
-of an ImageView.
+If you prefer your repositories to be self-reliant, just copy the
+`scalingimageview` folder into your project root and add it as a subproject
+to `settings.gradle`:
+
+	include ':app', ':scalingimageview'
+
+And to the dependencies block of your `app/build.gradle`:
+
+	dependencies {
+		compile project(':scalingimageview')
+	}
 
 How to use
 ----------
@@ -43,18 +51,20 @@ Maybe in a layout:
 
 Or from java:
 
+	import de.markusfisch.android.scalingimageview.widget.ScalingImageView;
+
 	ScalingImageView scalingImageView = new ScalingImageView(context);
 
 Changing the scale type must happen in source since reading attributes
 would require a [declare-styleable][styleable] resource and a bit of
 overhead I think would outweigh its value for this.
 
-So you need to call setScaleType() like this:
+So you need to call `setScaleType()` like this:
 
 	scalingImageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
-Only CENTER, CENTER_CROP and CENTER_INSIDE are supported.
-CENTER_INSIDE is the default.
+Only `CENTER`, `CENTER_CROP` and `CENTER_INSIDE` are supported.
+`CENTER_INSIDE` is the default.
 
 Scale Types
 -----------
@@ -112,6 +122,5 @@ License
 
 This widget is so basic, it should be Public Domain. And it is.
 
-[src]: https://github.com/markusfisch/ScalingImageView/blob/master/scalingimageview/src/main/java/de/markusfisch/android/scalingimageview/widget/ScalingImageView.java
 [scaletype]: https://developer.android.com/reference/android/widget/ImageView.ScaleType.html
 [styleable]: https://developer.android.com/training/custom-views/create-view.html
