@@ -25,11 +25,11 @@ Then add the dependency in your app/build.gradle:
 		compile 'com.github.markusfisch:ScalingImageView:1.0.1'
 	}
 
-### Manually
+### As subproject
 
-If you prefer your repositories to be self-reliant, just copy the
-`scalingimageview` folder into your project root and add it as a subproject
-to `settings.gradle`:
+If you prefer your project to be self-reliant and completely modifiable,
+just copy the `scalingimageview` folder into your project root and add it
+as a subproject to `settings.gradle`:
 
 	include ':app', ':scalingimageview'
 
