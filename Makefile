@@ -15,6 +15,9 @@ lint:
 findbugs:
 	./gradlew findBugs
 
+sonarqube:
+	./gradlew sonarqube
+
 infer: clean
 	infer -- ./gradlew assembleDebug
 

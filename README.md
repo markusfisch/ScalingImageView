@@ -1,5 +1,7 @@
 # ScalingImageView
 
+![Travis-ci](https://api.travis-ci.org/markusfisch/ScalingImageView.svg)
+
 An ImageView that transforms its drawable according to touch input.
 
 ![Screencast](http://markusfisch.github.io/ScalingImageView/screencast.gif)
