@@ -78,6 +78,10 @@ So you need to call `setScaleType()` like this:
 Only `CENTER`, `CENTER_CROP` and `CENTER_INSIDE` are supported.
 `CENTER_INSIDE` is the default.
 
+Please note that using `android:adjustViewBounds="true"` will implicitly
+set ScaleType to `FIT_CENTER` what is not supported and will result in an
+UnsupportedOperationException.
+
 Scale Types
 -----------
 

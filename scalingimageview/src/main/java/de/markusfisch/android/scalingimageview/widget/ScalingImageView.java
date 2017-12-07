@@ -59,7 +59,8 @@ public class ScalingImageView extends AppCompatImageView {
 		if (scaleType != ImageView.ScaleType.CENTER &&
 				scaleType != ImageView.ScaleType.CENTER_CROP &&
 				scaleType != ImageView.ScaleType.CENTER_INSIDE) {
-			throw new UnsupportedOperationException();
+			throw new UnsupportedOperationException("ScaleType " +
+					scaleType.toString() + " is not supported");
 		}
 
 		this.scaleType = scaleType;
@@ -286,7 +287,8 @@ public class ScalingImageView extends AppCompatImageView {
 		} else if (scaleType == ImageView.ScaleType.CENTER_CROP) {
 			scale = Math.max(xr, yr);
 		} else {
-			throw new UnsupportedOperationException();
+			throw new UnsupportedOperationException("ScaleType " +
+					scaleType.toString() + " is not supported");
 		}
 
 		matrix.postScale(scale, scale);
