@@ -10,6 +10,8 @@ buildscript {
 }
 
 apply plugin: 'com.android.library'
+apply plugin: 'maven'
+group = 'com.github.markusfisch'
 
 android {
 	compileSdkVersion sdk_version
@@ -19,8 +21,8 @@ android {
 		minSdkVersion 9
 		targetSdkVersion sdk_version
 
-		versionCode 4
-		versionName '1.0.3'
+		versionCode 5
+		versionName '1.0.4'
 	}
 }
 

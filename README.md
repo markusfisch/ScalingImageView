@@ -1,5 +1,7 @@
 # ScalingImageView
 
+[![](https://jitpack.io/v/markusfisch/ScalingImageView.svg)](https://jitpack.io/#markusfisch/ScalingImageView)
+
 An ImageView that transforms its drawable according to touch input.
 
 ![Screencast](http://markusfisch.github.io/ScalingImageView/screencast.gif)
@@ -22,7 +24,7 @@ repositories:
 Then add the dependency in your app/build.gradle:
 
 	dependencies {
-		compile 'com.github.markusfisch:ScalingImageView:1.0.3'
+		compile 'com.github.markusfisch:ScalingImageView:1.0.4'
 	}
 
 ### As subproject
