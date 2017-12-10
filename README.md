@@ -24,7 +24,7 @@ repositories:
 Then add the dependency in your app/build.gradle:
 
 	dependencies {
-		compile 'com.github.markusfisch:ScalingImageView:1.0.4'
+		compile 'com.github.markusfisch:ScalingImageView:1.0.5'
 	}
 
 ### As subproject

@@ -21,8 +21,8 @@ android {
 		minSdkVersion 9
 		targetSdkVersion sdk_version
 
-		versionCode 5
-		versionName '1.0.4'
+		versionCode 6
+		versionName '1.0.5'
 	}
 }
 
