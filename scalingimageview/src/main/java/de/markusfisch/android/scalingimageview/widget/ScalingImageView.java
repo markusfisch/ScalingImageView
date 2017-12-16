@@ -27,6 +27,7 @@ public class ScalingImageView extends AppCompatImageView {
 	private boolean reinit = false;
 	private float lastWidth;
 	private float lastHeight;
+	private float lastRotation;
 	private float magnifyScale = 4f;
 	private float minWidth;
 	private float rotation;
@@ -239,8 +240,8 @@ public class ScalingImageView extends AppCompatImageView {
 		RectF dr = getDrawableRect();
 		float newWidth = dr.width();
 		float newHeight = dr.height();
-		if (lastWidth == 0 || minWidth == 0 || inBounds() || Math.abs(
-				lastWidth / lastHeight - newWidth / newHeight) > .001f) {
+		if (minWidth == 0 || inBounds() || rotation != lastRotation ||
+				Math.abs(lastWidth / lastHeight - newWidth / newHeight) > .001f) {
 			center(bounds);
 		} else if (lastWidth != newWidth || lastHeight != newHeight) {
 			transformMatrix.preScale(lastWidth / newWidth,
@@ -251,6 +252,7 @@ public class ScalingImageView extends AppCompatImageView {
 		}
 		lastWidth = newWidth;
 		lastHeight = newHeight;
+		lastRotation = rotation;
 	}
 
 	/**
