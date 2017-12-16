@@ -1,5 +1,8 @@
 # Change Log
 
+## 1.1.1
+* Keep transformation for same aspect ratio only
+
 ## 1.1.0
 * Keeps transformation when the image is changed
 
