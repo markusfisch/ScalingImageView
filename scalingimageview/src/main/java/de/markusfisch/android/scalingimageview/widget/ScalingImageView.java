@@ -232,14 +232,15 @@ public class ScalingImageView extends AppCompatImageView {
 	}
 
 	/**
-	 * Center new image or remap it to have the exact same transformation
-	 * as the an previous image (if there was one)
+	 * Center new image or remap the current transformation to make the
+	 * new image fill the exact same rectangle as the previous one
 	 */
 	protected void centerOrRemap() {
 		RectF dr = getDrawableRect();
 		float newWidth = dr.width();
 		float newHeight = dr.height();
-		if (minWidth == 0 || inBounds()) {
+		if (lastWidth == 0 || minWidth == 0 || inBounds() || Math.abs(
+				lastWidth / lastHeight - newWidth / newHeight) > .001f) {
 			center(bounds);
 		} else if (lastWidth != newWidth || lastHeight != newHeight) {
 			transformMatrix.preScale(lastWidth / newWidth,
