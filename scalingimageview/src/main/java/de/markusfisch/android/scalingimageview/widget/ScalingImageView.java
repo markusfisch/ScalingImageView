@@ -391,6 +391,8 @@ public class ScalingImageView extends AppCompatImageView {
 		if (p2 != 0xffff) {
 			initialTapeline.set(event, p1, p2);
 		}
+
+		reinit = false;
 	}
 
 	private void transform(MotionEvent event) {
