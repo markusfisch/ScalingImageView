@@ -24,6 +24,9 @@ public class ScalingImageView extends AppCompatImageView {
 
 	private GestureDetector gestureDetector;
 	private ImageView.ScaleType scaleType = ImageView.ScaleType.CENTER_INSIDE;
+	private boolean reinit = false;
+	private float lastWidth;
+	private float lastHeight;
 	private float magnifyScale = 4f;
 	private float minWidth;
 	private float rotation;
@@ -195,7 +198,7 @@ public class ScalingImageView extends AppCompatImageView {
 			setBounds(left, top, right, bottom);
 		}
 
-		center(bounds);
+		centerOrRemap();
 	}
 
 	/**
@@ -229,6 +232,27 @@ public class ScalingImageView extends AppCompatImageView {
 	}
 
 	/**
+	 * Center new image or remap it to have the exact same transformation
+	 * as the an previous image (if there was one)
+	 */
+	protected void centerOrRemap() {
+		RectF dr = getDrawableRect();
+		float newWidth = dr.width();
+		float newHeight = dr.height();
+		if (minWidth == 0 || inBounds()) {
+			center(bounds);
+		} else if (lastWidth != newWidth || lastHeight != newHeight) {
+			transformMatrix.preScale(lastWidth / newWidth,
+					lastHeight / newHeight);
+			invalidateTransformation();
+			setMinWidth(bounds, new Matrix());
+			super.setImageMatrix(transformMatrix);
+		}
+		lastWidth = newWidth;
+		lastHeight = newHeight;
+	}
+
+	/**
 	 * Center image in given rectangle
 	 *
 	 * @param rect reference rectangle
@@ -241,6 +265,11 @@ public class ScalingImageView extends AppCompatImageView {
 	/** Return true if image is completely in bounds (means not zoomed) */
 	protected boolean inBounds() {
 		return getMappedRect().width() <= minWidth;
+	}
+
+	/** Reinitialize ongoing transformation */
+	protected void invalidateTransformation() {
+		reinit = true;
 	}
 
 	/**
@@ -365,6 +394,11 @@ public class ScalingImageView extends AppCompatImageView {
 	}
 
 	private void transform(MotionEvent event) {
+		if (reinit) {
+			initTransform(event, -1);
+			reinit = false;
+		}
+
 		transformMatrix.set(initialMatrix);
 
 		int pointerCount = event.getPointerCount();

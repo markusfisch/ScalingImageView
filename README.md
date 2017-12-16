@@ -4,10 +4,14 @@
 
 An ImageView that transforms its drawable according to touch input.
 
+Supports rotated images and keeps transformation when you exchange the
+image for another one with a different size.
+
+All of that in 370 lines of code (excluding blanks and comments).
+
 ![Screencast](http://markusfisch.github.io/ScalingImageView/screencast.gif)
 
-How to include
---------------
+## How to include
 
 ### Gradle
 
@@ -55,8 +59,7 @@ numbers of Android's dependencies, you need to define them in you root
 		...
 	}
 
-How to use
-----------
+## How to use
 
 Maybe in a layout:
 
@@ -72,10 +75,10 @@ Or from java:
 	ScalingImageView scalingImageView = new ScalingImageView(context);
 
 Changing the scale type must happen in source since reading attributes
-would require a [declare-styleable][styleable] resource and a bit of
-overhead I think would outweigh its value for this.
+would require a [declare-styleable][styleable] resource and some overhead
+I think would outweigh its value for this.
 
-So you need to call `setScaleType()` like this:
+So you need to call `setScaleType()`:
 
 	scalingImageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
@@ -86,8 +89,7 @@ Please note that using `android:adjustViewBounds="true"` will implicitly
 set ScaleType to `FIT_CENTER` what is not supported and will result in an
 UnsupportedOperationException.
 
-Scale Types
------------
+## Supported Scale Types
 
 ### [ImageView.ScaleType.CENTER][scaletype]
 
@@ -130,15 +132,13 @@ Scale Types
 	    |       |
 	    +-------+
 
-Demo
-----
+## Demo
 
 In app/ you'll find a demo.
 Either import it into Android Studio or, if you're not on that thing from
 Redmond, just type make to build, install and run.
 
-License
--------
+## License
 
 This widget is so basic, it should be Public Domain. And it is.
 
