@@ -9,6 +9,9 @@ debug:
 release: lint findbugs
 	./gradlew build
 
+aar:
+	./gradlew :scalingimageview:assembleRelease
+
 lint:
 	./gradlew lintDebug
 
