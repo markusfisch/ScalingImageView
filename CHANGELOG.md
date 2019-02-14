@@ -1,5 +1,8 @@
 # Change Log
 
+## 1.1.3
+* Reactivate JitPack support
+
 ## 1.1.2
 * Keeps transformation for same rotation only
 
