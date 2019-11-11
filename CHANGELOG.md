@@ -1,5 +1,8 @@
 # Change Log
 
+## 1.1.4
+* Make getMappedRect() public
+
 ## 1.1.3
 * Reactivate JitPack support
 
