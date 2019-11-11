@@ -20,6 +20,7 @@ public class ScalingImageView extends AppCompatImageView {
 	private final Tapeline initialTapeline = new Tapeline();
 	private final Tapeline transformTapeline = new Tapeline();
 	private final RectF drawableRect = new RectF();
+	private final RectF mappedRect = new RectF();
 	private final RectF bounds = new RectF();
 
 	private GestureDetector gestureDetector;
@@ -166,6 +167,12 @@ public class ScalingImageView extends AppCompatImageView {
 				(bounds.bottom - dstRect.top) / h);
 	}
 
+	/** Return rectangle of transformed image in view coordinates */
+	public RectF getMappedRect() {
+		transformMatrix.mapRect(mappedRect, getDrawableRect());
+		return mappedRect;
+	}
+
 	@Override
 	protected void onLayout(
 			boolean changed,
@@ -265,7 +272,7 @@ public class ScalingImageView extends AppCompatImageView {
 		super.setImageMatrix(transformMatrix);
 	}
 
-	/** Return true if image is completely in bounds (means not zoomed) */
+	/** Returns true if the image is not zoomed */
 	protected boolean inBounds() {
 		return getMappedRect().width() <= minWidth;
 	}
@@ -358,12 +365,6 @@ public class ScalingImageView extends AppCompatImageView {
 		}
 
 		return new RectF(0, 0, w, h);
-	}
-
-	private RectF getMappedRect() {
-		RectF dstRect = new RectF();
-		transformMatrix.mapRect(dstRect, getDrawableRect());
-		return dstRect;
 	}
 
 	private void initTransform(MotionEvent event, int ignoreIndex) {
