@@ -1,5 +1,8 @@
 # Change Log
 
+## 1.2.0
+* Add setMinWidth() to allow a smaller minimum width
+
 ## 1.1.4
 * Make getMappedRect() public
 
