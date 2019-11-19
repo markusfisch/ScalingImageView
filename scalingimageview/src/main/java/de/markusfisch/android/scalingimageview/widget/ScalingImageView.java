@@ -54,7 +54,7 @@ public class ScalingImageView extends AppCompatImageView {
 	@Override
 	public void setImageMatrix(Matrix matrix) {
 		transformMatrix.set(matrix);
-		setMinWidth(bounds, new Matrix());
+		fitImageAndSetMinWidth(bounds, new Matrix());
 		fitTranslate(transformMatrix, getDrawableRect(), bounds);
 		super.setImageMatrix(transformMatrix);
 	}
@@ -123,6 +123,21 @@ public class ScalingImageView extends AppCompatImageView {
 	}
 
 	/**
+	 * Set minimum width of image in view.
+	 * Default is bounds.
+	 *
+	 * @param width minimum width of image in view in pixels
+	 */
+	public void setMinWidth(float width) {
+		minWidth = width;
+	}
+
+	/** Return minimum width of image in view */
+	public float getMinWidth() {
+		return minWidth;
+	}
+
+	/**
 	 * Set image rotation
 	 *
 	 * @param degrees rotation in degrees
@@ -183,7 +198,8 @@ public class ScalingImageView extends AppCompatImageView {
 		super.onLayout(changed, left, top, right, bottom);
 
 		// use a separate method to layout the image so it's possible
-		// to override this behaviour without skipping super.onLayout()
+		// to override just layoutImage() without overriding this
+		// onLayout() with this invocation in it
 		layoutImage(changed, left, top, right, bottom);
 	}
 
@@ -205,8 +221,7 @@ public class ScalingImageView extends AppCompatImageView {
 		if (changed) {
 			setBounds(left, top, right, bottom);
 		}
-
-		centerOrRemap();
+		centerRemap();
 	}
 
 	/**
@@ -240,10 +255,10 @@ public class ScalingImageView extends AppCompatImageView {
 	}
 
 	/**
-	 * Center new image or remap the current transformation to make the
-	 * new image fill the exact same rectangle as the previous one
+	 * Center image and remap the current transformation to make the
+	 * image fill the exact same rectangle as the previous one.
 	 */
-	protected void centerOrRemap() {
+	protected void centerRemap() {
 		RectF dr = getDrawableRect();
 		float newWidth = dr.width();
 		float newHeight = dr.height();
@@ -254,7 +269,7 @@ public class ScalingImageView extends AppCompatImageView {
 			transformMatrix.preScale(lastWidth / newWidth,
 					lastHeight / newHeight);
 			invalidateTransformation();
-			setMinWidth(bounds, new Matrix());
+			fitImageAndSetMinWidth(bounds, new Matrix());
 			super.setImageMatrix(transformMatrix);
 		}
 		lastWidth = newWidth;
@@ -268,13 +283,15 @@ public class ScalingImageView extends AppCompatImageView {
 	 * @param rect reference rectangle
 	 */
 	protected void center(RectF rect) {
-		setMinWidth(rect, transformMatrix);
+		fitImageAndSetMinWidth(rect, transformMatrix);
 		super.setImageMatrix(transformMatrix);
 	}
 
-	/** Returns true if the image is not zoomed */
+	/** Returns true if the image is within the bounds */
 	protected boolean inBounds() {
-		return getMappedRect().width() <= minWidth;
+		RectF rect = getMappedRect();
+		return rect.width() <= bounds.width() &&
+				rect.height() <= bounds.height();
 	}
 
 	/** Reinitialize ongoing transformation */
@@ -283,13 +300,13 @@ public class ScalingImageView extends AppCompatImageView {
 	}
 
 	/**
-	 * Calculate minimum image width.
-	 * The image should never be scaled below this width.
+	 * Fit image into minimum rectangle.
 	 *
 	 * @param rect minimum rectangle in view
 	 * @param matrix resulting matrix
+	 * @return minimum width of image in view in pixels
 	 */
-	protected void setMinWidth(RectF rect, Matrix matrix) {
+	protected float fitImage(RectF rect, Matrix matrix) {
 		// don't try to store the drawable dimensions by overriding
 		// setImageDrawable() since it is called in the ImageView's
 		// constructor and no referenced member of this object will
@@ -298,7 +315,7 @@ public class ScalingImageView extends AppCompatImageView {
 		RectF srcRect = new RectF(getDrawableRect());
 
 		if (rect == null || matrix == null) {
-			return;
+			return 0f;
 		}
 
 		float dw = srcRect.width();
@@ -307,7 +324,7 @@ public class ScalingImageView extends AppCompatImageView {
 		float rh = rect.height();
 
 		if (dw < 1 || dh < 1 || rw < 1 || rh < 1) {
-			return;
+			return 0f;
 		}
 
 		RectF dstRect = new RectF();
@@ -337,7 +354,7 @@ public class ScalingImageView extends AppCompatImageView {
 
 		matrix.mapRect(dstRect, srcRect);
 
-		minWidth = dstRect.width();
+		return dstRect.width();
 	}
 
 	private void init(Context context) {
@@ -484,12 +501,22 @@ public class ScalingImageView extends AppCompatImageView {
 	}
 
 	private void magnify(float x, float y, float scale) {
-		if (inBounds()) {
+		RectF rc = getMappedRect();
+		int mappedWidth = Math.round(rc.width());
+		int mappedHeight = Math.round(rc.height());
+		int boundsWidth = Math.round(bounds.width());
+		int boundsHeight = Math.round(bounds.height());
+		if ((mappedWidth == boundsWidth && mappedHeight <= boundsHeight) ||
+				(mappedWidth <= boundsWidth && mappedHeight == boundsHeight)) {
 			transformMatrix.postScale(scale, scale, x, y);
 		} else {
-			setMinWidth(bounds, transformMatrix);
+			fitImage(bounds, transformMatrix);
 		}
 		super.setImageMatrix(transformMatrix);
+	}
+
+	private void fitImageAndSetMinWidth(RectF rect, Matrix matrix) {
+		minWidth = fitImage(rect, matrix);
 	}
 
 	private static class Tapeline {
