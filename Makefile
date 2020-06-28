@@ -5,7 +5,7 @@ all: debug install start
 debug:
 	./gradlew assembleDebug
 
-release: lint findbugs
+release: lint
 	./gradlew build
 
 aar:
@@ -13,12 +13,6 @@ aar:
 
 lint:
 	./gradlew lintDebug
-
-findbugs:
-	./gradlew findBugs
-
-sonarqube:
-	./gradlew sonarqube
 
 infer: clean
 	infer -- ./gradlew assembleDebug
