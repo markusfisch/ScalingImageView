@@ -188,6 +188,36 @@ public class ScalingImageView extends AppCompatImageView {
 		return mappedRect;
 	}
 
+	/**
+	 * Set bounds in whose to draw image in view
+	 *
+	 * @param left left coordinate in view
+	 * @param top top coordinate in view
+	 * @param right right coordinate in view
+	 * @param bottom bottom coordinate in view
+	 */
+	public void setBounds(
+			float left,
+			float top,
+			float right,
+			float bottom) {
+		bounds.set(left, top, right, bottom);
+	}
+
+	/**
+	 * Set bounds in whose to draw image in view
+	 *
+	 * @param rect rectangle in view
+	 */
+	public void setBounds(RectF rect) {
+		bounds.set(rect);
+	}
+
+	/** Return bounds in whose to draw image in view */
+	public RectF getBounds() {
+		return bounds;
+	}
+
 	@Override
 	protected void onLayout(
 			boolean changed,
@@ -222,36 +252,6 @@ public class ScalingImageView extends AppCompatImageView {
 			setBounds(left, top, right, bottom);
 		}
 		centerRemap();
-	}
-
-	/**
-	 * Set bounds in whose to draw image in view
-	 *
-	 * @param left left coordinate in view
-	 * @param top top coordinate in view
-	 * @param right right coordinate in view
-	 * @param bottom bottom coordinate in view
-	 */
-	protected void setBounds(
-			float left,
-			float top,
-			float right,
-			float bottom) {
-		bounds.set(left, top, right, bottom);
-	}
-
-	/**
-	 * Set bounds in whose to draw image in view
-	 *
-	 * @param rect rectangle in view
-	 */
-	protected void setBounds(RectF rect) {
-		bounds.set(rect);
-	}
-
-	/** Return bounds in whose to draw image in view */
-	protected RectF getBounds() {
-		return bounds;
 	}
 
 	/**
