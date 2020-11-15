@@ -5,7 +5,7 @@ An ImageView that transforms its drawable according to touch input.
 Supports rotated images and keeps transformation when you exchange the
 image for another one with a different size.
 
-All of that in 374 lines of code (excluding blanks and comments).
+All of that in ~400 lines of code (excluding blanks and comments).
 
 ![Screencast](http://markusfisch.github.io/ScalingImageView/screencast.gif)
 
