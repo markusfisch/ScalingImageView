@@ -26,6 +26,7 @@ public class ScalingImageView extends AppCompatImageView {
 	private GestureDetector gestureDetector;
 	private ImageView.ScaleType scaleType = ImageView.ScaleType.CENTER_INSIDE;
 	private boolean reinit = false;
+	private boolean restrictTranslation = true;
 	private float lastWidth;
 	private float lastHeight;
 	private float lastRotation;
@@ -105,6 +106,21 @@ public class ScalingImageView extends AppCompatImageView {
 		}
 
 		return super.onTouchEvent(event);
+	}
+
+	/**
+	 * Set if image translation should be restricted to the bounds.
+	 * Default is true.
+	 *
+	 * @param restrict true if translation should be restricted
+	 */
+	public void setRestrictTranslation(boolean restrict) {
+		restrictTranslation = restrict;
+	}
+
+	/** Returns true if image translation is restricted */
+	public boolean getRestrictTranslation() {
+		return restrictTranslation;
 	}
 
 	/**
@@ -452,7 +468,8 @@ public class ScalingImageView extends AppCompatImageView {
 					transformTapeline.pivotY - initialTapeline.pivotY);
 		}
 
-		if (fitTranslate(transformMatrix, drawableRect, bounds)) {
+		if (restrictTranslation &&
+				fitTranslate(transformMatrix, drawableRect, bounds)) {
 			initTransform(event, -1);
 		}
 
