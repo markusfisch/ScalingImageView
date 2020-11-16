@@ -23,7 +23,7 @@ android {
 		targetSdkVersion sdk_version
 
 		versionCode 12
-		versionName '1.2.0'
+		versionName '1.3.0'
 	}
 }
 

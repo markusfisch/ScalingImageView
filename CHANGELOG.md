@@ -1,5 +1,9 @@
 # Change Log
 
+## 1.3.0
+* Add setRestrictTranslation() to disable restricting image translation
+* Make setBounds()/getBounds() public
+
 ## 1.2.0
 * Add setMinWidth() to allow a smaller minimum width
 
