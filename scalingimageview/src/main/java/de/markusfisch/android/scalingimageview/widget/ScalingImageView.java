@@ -97,7 +97,7 @@ public class ScalingImageView extends AppCompatImageView {
 				return true;
 			case MotionEvent.ACTION_POINTER_UP:
 				initTransform(event,
-						// ignore the pointer that has gone up
+						// Ignore the pointer that has gone up.
 						event.getActionIndex());
 				return true;
 			case MotionEvent.ACTION_CANCEL:
@@ -118,7 +118,7 @@ public class ScalingImageView extends AppCompatImageView {
 		restrictTranslation = restrict;
 	}
 
-	/** Returns true if image translation is restricted */
+	/** Returns true if image translation is restricted. */
 	public boolean getRestrictTranslation() {
 		return restrictTranslation;
 	}
@@ -133,7 +133,7 @@ public class ScalingImageView extends AppCompatImageView {
 		magnifyScale = scale;
 	}
 
-	/** Return double tap magnification multiplier */
+	/** Return double tap magnification multiplier. */
 	public float getMagnifyScale() {
 		return magnifyScale;
 	}
@@ -148,13 +148,13 @@ public class ScalingImageView extends AppCompatImageView {
 		minWidth = width;
 	}
 
-	/** Return minimum width of image in view */
+	/** Return minimum width of image in view. */
 	public float getMinWidth() {
 		return minWidth;
 	}
 
 	/**
-	 * Set image rotation
+	 * Set image rotation.
 	 *
 	 * @param degrees rotation in degrees
 	 */
@@ -167,12 +167,12 @@ public class ScalingImageView extends AppCompatImageView {
 		requestLayout();
 	}
 
-	/** Return current image rotation */
+	/** Return current image rotation. */
 	public float getImageRotation() {
 		return rotation;
 	}
 
-	/** Return rectangle in image that is in view bounds */
+	/** Return rectangle in image that is in view bounds. */
 	public Rect getRectInBounds() {
 		RectF srcRect = getDrawableRect();
 		RectF dstRect = new RectF();
@@ -186,7 +186,7 @@ public class ScalingImageView extends AppCompatImageView {
 				Math.round((bounds.bottom - dstRect.top) / scale));
 	}
 
-	/** Return normalized rectangle in image that is in view bounds */
+	/** Return normalized rectangle in image that is in view bounds. */
 	public RectF getNormalizedRectInBounds() {
 		RectF dstRect = getMappedRect();
 		float w = dstRect.width();
@@ -198,14 +198,14 @@ public class ScalingImageView extends AppCompatImageView {
 				(bounds.bottom - dstRect.top) / h);
 	}
 
-	/** Return rectangle of transformed image in view coordinates */
+	/** Return rectangle of transformed image in view coordinates. */
 	public RectF getMappedRect() {
 		transformMatrix.mapRect(mappedRect, getDrawableRect());
 		return mappedRect;
 	}
 
 	/**
-	 * Set bounds in whose to draw image in view
+	 * Set bounds in whose to draw image in view.
 	 *
 	 * @param left left coordinate in view
 	 * @param top top coordinate in view
@@ -221,7 +221,7 @@ public class ScalingImageView extends AppCompatImageView {
 	}
 
 	/**
-	 * Set bounds in whose to draw image in view
+	 * Set bounds in whose to draw image in view.
 	 *
 	 * @param rect rectangle in view
 	 */
@@ -229,7 +229,7 @@ public class ScalingImageView extends AppCompatImageView {
 		bounds.set(rect);
 	}
 
-	/** Return bounds in whose to draw image in view */
+	/** Return bounds in whose to draw image in view. */
 	public RectF getBounds() {
 		return bounds;
 	}
@@ -243,14 +243,14 @@ public class ScalingImageView extends AppCompatImageView {
 			int bottom) {
 		super.onLayout(changed, left, top, right, bottom);
 
-		// use a separate method to layout the image so it's possible
+		// Use a separate method to layout the image so it's possible
 		// to override just layoutImage() without overriding this
-		// onLayout() with this invocation in it
+		// onLayout() with this invocation in it.
 		layoutImage(changed, left, top, right, bottom);
 	}
 
 	/**
-	 * Layout image
+	 * Layout image.
 	 *
 	 * @param changed true when layout has changed
 	 * @param left layout left coordinate
@@ -294,7 +294,7 @@ public class ScalingImageView extends AppCompatImageView {
 	}
 
 	/**
-	 * Center image in given rectangle
+	 * Center image in given rectangle.
 	 *
 	 * @param rect reference rectangle
 	 */
@@ -303,14 +303,14 @@ public class ScalingImageView extends AppCompatImageView {
 		super.setImageMatrix(transformMatrix);
 	}
 
-	/** Returns true if the image is within the bounds */
+	/** Returns true if the image is within the bounds. */
 	protected boolean inBounds() {
 		RectF rect = getMappedRect();
 		return rect.width() <= bounds.width() &&
 				rect.height() <= bounds.height();
 	}
 
-	/** Reinitialize ongoing transformation */
+	/** Reinitialize ongoing transformation. */
 	protected void invalidateTransformation() {
 		reinit = true;
 	}
@@ -323,7 +323,7 @@ public class ScalingImageView extends AppCompatImageView {
 	 * @return minimum width of image in view in pixels
 	 */
 	protected float fitImage(RectF rect, Matrix matrix) {
-		// don't try to store the drawable dimensions by overriding
+		// Don't try to store the drawable dimensions by overriding
 		// setImageDrawable() since it is called in the ImageView's
 		// constructor and no referenced member of this object will
 		// have been initialized yet. So it's best to simply request
@@ -404,9 +404,8 @@ public class ScalingImageView extends AppCompatImageView {
 		initialMatrix.set(transformMatrix);
 		drawableRect.set(getDrawableRect());
 
-		// try to find two pointers that are down;
-		// event may contain a pointer that has
-		// gone up and must be ignored
+		// Try to find two pointers that are down.
+		// "event" may contain a pointer that has gone up and must be ignored.
 		int p1 = 0xffff;
 		int p2 = 0xffff;
 
