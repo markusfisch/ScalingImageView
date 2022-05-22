@@ -14,6 +14,8 @@ import android.view.MotionEvent;
 import android.widget.ImageView;
 
 public class ScalingImageView extends AppCompatImageView {
+	private static final double RAD2DEG = 180.0 / Math.PI;
+
 	private final SparseArray<PointF> initialPoint = new SparseArray<>();
 	private final Matrix initialMatrix = new Matrix();
 	private final Matrix transformMatrix = new Matrix();
@@ -22,11 +24,13 @@ public class ScalingImageView extends AppCompatImageView {
 	private final RectF drawableRect = new RectF();
 	private final RectF mappedRect = new RectF();
 	private final RectF bounds = new RectF();
+	private final float[] transformMatrixValues = new float[9];
 
 	private GestureDetector gestureDetector;
 	private ImageView.ScaleType scaleType = ImageView.ScaleType.CENTER_INSIDE;
 	private boolean reinit = false;
 	private boolean restrictTranslation = true;
+	private boolean freeRotation = false;
 	private float lastWidth;
 	private float lastHeight;
 	private float lastRotation;
@@ -124,6 +128,20 @@ public class ScalingImageView extends AppCompatImageView {
 	}
 
 	/**
+	 * Set whether the image can be freely rotated. Default is false.
+	 *
+	 * @param freeRotation true if the image should be freely rotated
+	 */
+	public void setFreeRotation(boolean freeRotation) {
+		this.freeRotation = freeRotation;
+	}
+
+	/** Returns true if the image can be freely rotated. */
+	public boolean getFreeRotation() {
+		return freeRotation;
+	}
+
+	/**
 	 * Set multiplier for how much a double tap will magnify the image.
 	 * Default is 4.
 	 *
@@ -169,7 +187,23 @@ public class ScalingImageView extends AppCompatImageView {
 
 	/** Return current image rotation. */
 	public float getImageRotation() {
-		return rotation;
+		if (freeRotation) {
+			transformMatrix.getValues(transformMatrixValues);
+			return (float) (Math.atan2(-transformMatrixValues[1],
+					transformMatrixValues[4]) * RAD2DEG);
+		} else {
+			return rotation;
+		}
+	}
+
+	/** Return X coordiate of pivot point. */
+	public float getPivotX() {
+		return transformMatrixValues[2];
+	}
+
+	/** Return Y coordiate of pivot point. */
+	public float getPivotY() {
+		return transformMatrixValues[5];
 	}
 
 	/** Return rectangle in image that is in view bounds. */
@@ -462,6 +496,13 @@ public class ScalingImageView extends AppCompatImageView {
 					initialTapeline.pivotX,
 					initialTapeline.pivotY);
 
+			if (freeRotation) {
+				transformMatrix.postRotate(
+						transformTapeline.angle - initialTapeline.angle,
+						transformTapeline.pivotX,
+						transformTapeline.pivotY);
+			}
+
 			transformMatrix.postTranslate(
 					transformTapeline.pivotX - initialTapeline.pivotX,
 					transformTapeline.pivotY - initialTapeline.pivotY);
@@ -539,6 +580,7 @@ public class ScalingImageView extends AppCompatImageView {
 		private float length;
 		private float pivotX;
 		private float pivotY;
+		private float angle;
 
 		private void set(MotionEvent event, int p1, int p2) {
 			float x1 = event.getX(p1);
@@ -551,6 +593,8 @@ public class ScalingImageView extends AppCompatImageView {
 			length = (float) Math.sqrt(dx * dx + dy * dy);
 			pivotX = (x1 + x2) * .5f;
 			pivotY = (y1 + y2) * .5f;
+
+			angle = (float) (Math.atan2(dy, dx) * RAD2DEG);
 		}
 	}
 }

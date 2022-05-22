@@ -116,6 +116,21 @@ UnsupportedOperationException.
 	    |       |
 	    +-------+
 
+## Image Rotation
+
+You can either set any image rotation (in degrees) at any time with
+`setImageRotation()`:
+
+	scalingImageView.setImageRotation(90f);
+
+Or allow the user to freely rotate the image with `setFreeRotation()`:
+
+	scalingImageView.setFreeRotation(true);
+
+If you want to know the angle and pivot of the rotation, you can use
+`getImageRotation()`, `getPivotX()` and `getPivotY()`. Just make sure to
+always invoke `getImageRotation()` first as it also updates the pivot point.
+
 ## Demo
 
 In app/ you'll find a demo.
