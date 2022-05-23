@@ -1,5 +1,8 @@
 # Change Log
 
+## 1.4.0
+* Allow free image rotation
+
 ## 1.3.0
 * Add setRestrictTranslation() to disable restricting image translation
 * Make setBounds()/getBounds() public
