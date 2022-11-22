@@ -1,5 +1,6 @@
 package de.markusfisch.android.scalingimageview.widget;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Matrix;
 import android.graphics.PointF;
@@ -83,6 +84,8 @@ public class ScalingImageView extends AppCompatImageView {
 		return scaleType;
 	}
 
+	// This is only listening for gestures, not clicks.
+	@SuppressLint("ClickableViewAccessibility")
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 		if (gestureDetector.onTouchEvent(event)) {
