@@ -1,14 +1,14 @@
 package de.markusfisch.android.scalingimageview.widget;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.graphics.Matrix;
 import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.graphics.drawable.Drawable;
+import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
 import android.util.SparseArray;
-import android.support.v7.widget.AppCompatImageView;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.widget.ImageView;
@@ -122,7 +122,9 @@ public class ScalingImageView extends AppCompatImageView {
 		restrictTranslation = restrict;
 	}
 
-	/** Returns true if image translation is restricted. */
+	/**
+	 * Returns true if image translation is restricted.
+	 */
 	public boolean getRestrictTranslation() {
 		return restrictTranslation;
 	}
@@ -136,7 +138,9 @@ public class ScalingImageView extends AppCompatImageView {
 		this.freeRotation = freeRotation;
 	}
 
-	/** Returns true if the image can be freely rotated. */
+	/**
+	 * Returns true if the image can be freely rotated.
+	 */
 	public boolean getFreeRotation() {
 		return freeRotation;
 	}
@@ -151,7 +155,9 @@ public class ScalingImageView extends AppCompatImageView {
 		magnifyScale = scale;
 	}
 
-	/** Return double tap magnification multiplier. */
+	/**
+	 * Return double tap magnification multiplier.
+	 */
 	public float getMagnifyScale() {
 		return magnifyScale;
 	}
@@ -166,7 +172,9 @@ public class ScalingImageView extends AppCompatImageView {
 		minWidth = width;
 	}
 
-	/** Return minimum width of image in view. */
+	/**
+	 * Return minimum width of image in view.
+	 */
 	public float getMinWidth() {
 		return minWidth;
 	}
@@ -185,7 +193,9 @@ public class ScalingImageView extends AppCompatImageView {
 		requestLayout();
 	}
 
-	/** Return current image rotation. */
+	/**
+	 * Return current image rotation.
+	 */
 	public float getImageRotation() {
 		if (freeRotation) {
 			transformMatrix.getValues(transformMatrixValues);
@@ -196,17 +206,23 @@ public class ScalingImageView extends AppCompatImageView {
 		}
 	}
 
-	/** Return X coordiate of pivot point. */
+	/**
+	 * Return X coordiate of pivot point.
+	 */
 	public float getPivotX() {
 		return transformMatrixValues[2];
 	}
 
-	/** Return Y coordiate of pivot point. */
+	/**
+	 * Return Y coordiate of pivot point.
+	 */
 	public float getPivotY() {
 		return transformMatrixValues[5];
 	}
 
-	/** Return rectangle in image that is in view bounds. */
+	/**
+	 * Return rectangle in image that is in view bounds.
+	 */
 	public Rect getRectInBounds() {
 		RectF srcRect = getDrawableRect();
 		RectF dstRect = new RectF();
@@ -220,7 +236,9 @@ public class ScalingImageView extends AppCompatImageView {
 				Math.round((bounds.bottom - dstRect.top) / scale));
 	}
 
-	/** Return normalized rectangle in image that is in view bounds. */
+	/**
+	 * Return normalized rectangle in image that is in view bounds.
+	 */
 	public RectF getNormalizedRectInBounds() {
 		RectF dstRect = getMappedRect();
 		float w = dstRect.width();
@@ -232,7 +250,9 @@ public class ScalingImageView extends AppCompatImageView {
 				(bounds.bottom - dstRect.top) / h);
 	}
 
-	/** Return rectangle of transformed image in view coordinates. */
+	/**
+	 * Return rectangle of transformed image in view coordinates.
+	 */
 	public RectF getMappedRect() {
 		transformMatrix.mapRect(mappedRect, getDrawableRect());
 		return mappedRect;
@@ -241,9 +261,9 @@ public class ScalingImageView extends AppCompatImageView {
 	/**
 	 * Set bounds in whose to draw image in view.
 	 *
-	 * @param left left coordinate in view
-	 * @param top top coordinate in view
-	 * @param right right coordinate in view
+	 * @param left   left coordinate in view
+	 * @param top    top coordinate in view
+	 * @param right  right coordinate in view
 	 * @param bottom bottom coordinate in view
 	 */
 	public void setBounds(
@@ -263,7 +283,9 @@ public class ScalingImageView extends AppCompatImageView {
 		bounds.set(rect);
 	}
 
-	/** Return bounds in whose to draw image in view. */
+	/**
+	 * Return bounds in whose to draw image in view.
+	 */
 	public RectF getBounds() {
 		return bounds;
 	}
@@ -287,10 +309,10 @@ public class ScalingImageView extends AppCompatImageView {
 	 * Layout image.
 	 *
 	 * @param changed true when layout has changed
-	 * @param left layout left coordinate
-	 * @param top layout top coordinate
-	 * @param right layout right coordinate
-	 * @param bottom layout bottom coordinate
+	 * @param left    layout left coordinate
+	 * @param top     layout top coordinate
+	 * @param right   layout right coordinate
+	 * @param bottom  layout bottom coordinate
 	 */
 	protected void layoutImage(
 			boolean changed,
@@ -337,14 +359,18 @@ public class ScalingImageView extends AppCompatImageView {
 		super.setImageMatrix(transformMatrix);
 	}
 
-	/** Returns true if the image is within the bounds. */
+	/**
+	 * Returns true if the image is within the bounds.
+	 */
 	protected boolean inBounds() {
 		RectF rect = getMappedRect();
 		return rect.width() <= bounds.width() &&
 				rect.height() <= bounds.height();
 	}
 
-	/** Reinitialize ongoing transformation. */
+	/**
+	 * Reinitialize ongoing transformation.
+	 */
 	protected void invalidateTransformation() {
 		reinit = true;
 	}
@@ -352,7 +378,7 @@ public class ScalingImageView extends AppCompatImageView {
 	/**
 	 * Fit image into minimum rectangle.
 	 *
-	 * @param rect minimum rectangle in view
+	 * @param rect   minimum rectangle in view
 	 * @param matrix resulting matrix
 	 * @return minimum width of image in view in pixels
 	 */
