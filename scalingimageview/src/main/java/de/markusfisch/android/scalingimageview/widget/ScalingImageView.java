@@ -91,8 +91,6 @@ public class ScalingImageView extends AppCompatImageView {
 
 		switch (event.getActionMasked()) {
 			case MotionEvent.ACTION_DOWN:
-				initTransform(event, -1);
-				return true;
 			case MotionEvent.ACTION_POINTER_DOWN:
 				initTransform(event, -1);
 				return true;
