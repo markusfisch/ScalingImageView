@@ -386,7 +386,7 @@ public class ScalingImageView extends AppCompatImageView {
 		// constructor and no referenced member of this object will
 		// have been initialized yet. So it's best to simply request
 		// the dimensions when they are required only.
-		RectF srcRect = new RectF(getDrawableRect());
+		RectF srcRect = getDrawableRect();
 
 		if (rect == null || matrix == null) {
 			return 0f;
