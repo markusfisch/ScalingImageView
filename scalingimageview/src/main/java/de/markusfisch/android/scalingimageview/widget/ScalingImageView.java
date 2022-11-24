@@ -404,26 +404,16 @@ public class ScalingImageView extends AppCompatImageView {
 			return 0f;
 		}
 
+		// First rotate the image.
 		RectF dstRect = new RectF();
 		matrix.setTranslate(dw * -.5f, dh * -.5f);
 		matrix.postRotate(rotation);
 		matrix.mapRect(dstRect, srcRect);
 
-		float xr = rw / dstRect.width();
-		float yr = rh / dstRect.height();
-		float scale;
-
-		if (scaleType == ImageView.ScaleType.CENTER) {
-			scale = 1f;
-		} else if (scaleType == ImageView.ScaleType.CENTER_INSIDE) {
-			scale = Math.min(xr, yr);
-		} else if (scaleType == ImageView.ScaleType.CENTER_CROP) {
-			scale = Math.max(xr, yr);
-		} else {
-			throw new UnsupportedOperationException("ScaleType " +
-					scaleType.toString() + " is not supported");
-		}
-
+		// Then center the bounding rectangle of the rotated image.
+		float scale = getScaleFactorForScaleType(scaleType,
+				rw / dstRect.width(),
+				rh / dstRect.height());
 		matrix.postScale(scale, scale);
 		matrix.postTranslate(
 				Math.round(rect.left + rw * .5f),
@@ -432,6 +422,22 @@ public class ScalingImageView extends AppCompatImageView {
 		matrix.mapRect(dstRect, srcRect);
 
 		return dstRect.width();
+	}
+
+	private static float getScaleFactorForScaleType(
+			ScaleType scaleType,
+			float width, float height) {
+		switch (scaleType) {
+			case CENTER:
+				return 1f;
+			case CENTER_INSIDE:
+				return Math.min(width, height);
+			case CENTER_CROP:
+				return Math.max(width, height);
+			default:
+				throw new UnsupportedOperationException("ScaleType " +
+						scaleType + " is not supported");
+		}
 	}
 
 	private void init(Context context) {
@@ -551,7 +557,9 @@ public class ScalingImageView extends AppCompatImageView {
 		matrix.mapRect(dstRect, rect);
 
 		float w = dstRect.width();
-		return w * scale < minWidth ? minWidth / w : scale;
+		return w * scale < minWidth
+				? minWidth / w
+				: scale;
 	}
 
 	private static boolean fitTranslate(
@@ -569,12 +577,12 @@ public class ScalingImageView extends AppCompatImageView {
 		float fh = frame.height();
 		float minX = frame.right - w;
 		float minY = frame.bottom - h;
-		float dx = w > fw ?
-				Math.max(minX - x, Math.min(frame.left - x, 0)) :
-				(frame.left + Math.round((fw - w) * .5f)) - x;
-		float dy = h > fh ?
-				Math.max(minY - y, Math.min(frame.top - y, 0)) :
-				(frame.top + Math.round((fh - h) * .5f)) - y;
+		float dx = w > fw
+				? Math.max(minX - x, Math.min(frame.left - x, 0))
+				: (frame.left + Math.round((fw - w) * .5f)) - x;
+		float dy = h > fh
+				? Math.max(minY - y, Math.min(frame.top - y, 0))
+				: (frame.top + Math.round((fh - h) * .5f)) - y;
 
 		if (dx != 0 || dy != 0) {
 			matrix.postTranslate(dx, dy);
