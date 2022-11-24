@@ -617,7 +617,7 @@ public class ScalingImageView extends AppCompatImageView {
 			float dx = x2 - x1;
 			float dy = y2 - y1;
 
-			length = (float) Math.sqrt(dx * dx + dy * dy);
+			length = (float) Math.hypot(dx, dy);
 			pivotX = (x1 + x2) * .5f;
 			pivotY = (y1 + y2) * .5f;
 
