@@ -208,14 +208,14 @@ public class ScalingImageView extends AppCompatImageView {
 	}
 
 	/**
-	 * Return X coordiate of pivot point.
+	 * Return X coordinate of pivot point.
 	 */
 	public float getPivotX() {
 		return transformMatrixValues[2];
 	}
 
 	/**
-	 * Return Y coordiate of pivot point.
+	 * Return Y coordinate of pivot point.
 	 */
 	public float getPivotY() {
 		return transformMatrixValues[5];
