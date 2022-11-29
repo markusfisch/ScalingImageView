@@ -1,5 +1,8 @@
 # Change Log
 
+## 1.4.1
+* Respect restriction when setting an image matrix
+
 ## 1.4.0
 * Allow free image rotation
 
