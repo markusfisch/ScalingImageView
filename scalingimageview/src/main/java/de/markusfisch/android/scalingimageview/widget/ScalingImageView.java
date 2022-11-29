@@ -61,7 +61,9 @@ public class ScalingImageView extends AppCompatImageView {
 	public void setImageMatrix(Matrix matrix) {
 		transformMatrix.set(matrix);
 		fitImageAndSetMinWidth(bounds, new Matrix());
-		fitTranslate(transformMatrix, getDrawableRect(), bounds);
+		if (restrictTranslation) {
+			fitTranslate(transformMatrix, getDrawableRect(), bounds);
+		}
 		super.setImageMatrix(transformMatrix);
 	}
 
