@@ -1,16 +1,7 @@
-buildscript {
-	repositories {
-		google()
-		mavenCentral()
-	}
-
-	dependencies {
-		classpath "com.android.tools.build:gradle:$tools_version"
-	}
+plugins {
+	id 'com.android.library'
+	id 'maven-publish'
 }
-
-apply plugin: 'com.android.library'
-apply plugin: 'maven-publish'
 
 android {
 	namespace 'de.markusfisch.android.scalingimageview'
@@ -23,17 +14,22 @@ android {
 		versionCode 14
 		versionName '1.4.1'
 	}
+
+	buildTypes {
+		release
+	}
 }
 
-afterEvaluate {
-	publishing {
-		publications {
-			release(MavenPublication) {
-				from components.release
-				groupId = 'com.github.markusfisch'
-				artifactId = 'final'
-				version = '1.4.1'
+publishing {
+	publications {
+		release(MavenPublication) {
+			afterEvaluate {
+				from components.findByName("release")
 			}
+
+			groupId = 'com.github.markusfisch'
+			artifactId = 'final'
+			version = '1.4.1'
 		}
 	}
 }
