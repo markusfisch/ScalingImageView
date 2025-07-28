@@ -1,7 +1,7 @@
 buildscript {
 	ext {
-		tools_version = '7.3.0'
 		sdk_version = 32
+		tools_version = '8.10.1'
 	}
 
 	repositories {
@@ -29,6 +29,6 @@ allprojects {
 	}
 }
 
-task clean(type: Delete) {
+tasks.register('clean', Delete) {
 	delete rootProject.buildDir
 }
